@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class Category(models.Model):
@@ -34,3 +35,14 @@ class Warehouse(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Worker(AbstractUser):
+    phone_number = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        verbose_name = "worker"
+        verbose_name_plural = "workers"
+
+    def __str__(self):
+        return f"{self.username} {self.first_name} {self.last_name} {self.phone_number}"
