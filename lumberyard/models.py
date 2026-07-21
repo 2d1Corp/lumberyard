@@ -43,7 +43,7 @@ class Warehouse(models.Model):
 
 
 class Worker(AbstractUser):
-    phone_number = models.CharField(max_length=255, unique=True)
+    phone_number = models.CharField(max_length=32, unique=True)
 
     class Meta:
         verbose_name = "worker"
