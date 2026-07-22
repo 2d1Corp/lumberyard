@@ -1,0 +1,21 @@
+{% extends "lumberyard/base.html" %}
+
+{% block body %}
+  <header class="border-bottom">
+    <nav class="navbar">
+      <div class="container">
+        <a class="navbar-brand fw-semibold" href="{% url 'index' %}">
+          Lumberyard
+        </a>
+
+        <a class="nav-link active" href="{% url 'index' %}" aria-current="page">
+          Home
+        </a>
+      </div>
+    </nav>
+  </header>
+  <main class="container py-4">
+    {% block content %}
+    {% endblock %}
+  </main>
+{% endblock %}
