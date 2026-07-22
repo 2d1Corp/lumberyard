@@ -1,0 +1,26 @@
+{% extends "lumberyard/base.html" %}
+
+{% block body %}
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="{% url 'dashboard' %}">
+        Lumberyard
+      </a>
+      <div class="d-flex align-items-center gap-3">
+           <span class="navbar-text text-white-50">
+             {{ user.username }}
+           </span>
+        <form action="/logout/" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-light">
+            Logout
+          </button>
+        </form>
+      </div>
+    </div>
+  </nav>
+  <main class="container py-4">
+    {% block content %}
+    {% endblock %}
+  </main>
+{% endblock %}
