@@ -7,10 +7,10 @@
         Lumberyard
       </a>
       <div class="d-flex align-items-center gap-3">
-           <span class="navbar-text text-white-50">
-             {{ user.username }}
-           </span>
-        <form action="/logout/" method="post">
+        <span class="navbar-text text-white-50">
+          {{ user.username }}
+        </span>
+        <form action="{% url 'logout' %}" method="post">
           {% csrf_token %}
           <button type="submit" class="btn btn-sm btn-outline-light">
             Logout

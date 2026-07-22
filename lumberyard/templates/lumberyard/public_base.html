@@ -13,16 +13,16 @@
         </a>
         {% if user.is_authenticated %}
           <span class="navbar-text me-2">
-       Hi, {{ user.username }}
-     </span>
-          <form action="/logout/" method="post">
+            Hi, {{ user.username }}
+          </span>
+          <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-sm btn-outline-secondary">
               Logout
             </button>
           </form>
         {% else %}
-          <a class="nav-link" href="/login/">
+          <a class="nav-link" href="{% url 'login' %}">
             Login
           </a>
         {% endif %}
