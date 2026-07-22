@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.shortcuts import render
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from .models import Material, Supplier, Warehouse, Worker
 
@@ -38,3 +38,11 @@ class MaterialListView(LoginRequiredMixin, ListView):
             )
 
         return queryset
+
+
+class MaterialDetailView(LoginRequiredMixin, DetailView):
+    model = Material
+    queryset = Material.objects.select_related("category").prefetch_related(
+        "stock_balances__warehouse",
+        "supplier_offers__supplier",
+    )

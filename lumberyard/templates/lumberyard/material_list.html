@@ -37,30 +37,34 @@
   <div class="table-responsive">
     <table class="table table-hover align-middle">
       <thead class="table-light">
-        <tr>
-          <th>SKU</th>
-          <th>Material</th>
-          <th>Category</th>
-          <th>Unit</th>
-          <th>Sale price</th>
-        </tr>
+      <tr>
+        <th>Material</th>
+        <th>SKU</th>
+        <th>Category</th>
+        <th>Unit</th>
+        <th>Sale price</th>
+      </tr>
       </thead>
       <tbody>
-        {% for material in material_list %}
-          <tr>
-            <td><code>{{ material.sku }}</code></td>
-            <td class="fw-semibold">{{ material.name }}</td>
-            <td>{{ material.category.name }}</td>
-            <td>{{ material.get_unit_display }}</td>
-            <td>{{ material.sale_price }}</td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="5" class="text-center text-muted py-4">
-              No materials found.
-            </td>
-          </tr>
-        {% endfor %}
+      {% for material in material_list %}
+        <tr>
+          <td class="fw-semibold">
+            <a href="{% url 'material-detail' material.pk %}">{{ material.name }}</a>
+          </td>
+          <td>
+           {{ material.sku }}
+          </td>
+          <td>{{ material.category.name }}</td>
+          <td>{{ material.get_unit_display }}</td>
+          <td>{{ material.sale_price }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4">
+            No materials found.
+          </td>
+        </tr>
+      {% endfor %}
       </tbody>
     </table>
   </div>

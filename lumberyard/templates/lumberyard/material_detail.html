@@ -1,0 +1,105 @@
+{% extends "lumberyard/dashboard_base.html" %}
+
+{% block title %}{{ material.name }} | Lumberyard{% endblock %}
+
+{% block content %}
+
+  <!-- Посилання назад до списку -->
+  <a href="{% url 'material-list' %}" class="btn btn-link">← All materials</a>
+
+  <div class="row">
+    <div class="col-lg-7">
+      <h1 class="mt-2 mb-4">{{ material.name }}</h1>
+
+      <h2 class="h5 mt-4 mb-3">Details</h2>
+
+  <h2 class="h5 mt-4 mb-3">Details</h2>
+  <table class="table table-hover align-middle mb-4">
+    <tr>
+      <th class="col-3">SKU</th>
+      <td>{{ material.sku }}</td>
+    </tr>
+    <tr>
+      <th class="col-3">Category</th>
+      <td>{{ material.category.name }}</td>
+    </tr>
+    <tr>
+      <th class="col-3">Unit</th>
+      <td>{{ material.get_unit_display }}</td>
+    </tr>
+    <tr>
+      <th class="col-3">Sale price</th>
+      <td>{{ material.sale_price }}</td>
+    </tr>
+    <tr>
+      <th class="col-3">Species</th>
+      <td>{{ material.species }}</td>
+    </tr>
+    <tr>
+      <th class="col-3">Grade</th>
+      <td>{{ material.grade }}</td>
+    </tr>
+    <tr>
+      <th class="col-3">Thickness</th>
+      <td>{{ material.thickness_mm|default:"-" }}</td>
+    </tr>
+    <tr>
+      <th class="col-3">Width</th>
+      <td>{{ material.width_mm|default:"-" }}</td>
+    </tr>
+    <tr>
+      <th class="col-3">Length</th>
+      <td>{{ material.length_mm|default:"-" }}</td>
+    </tr>
+  </table>
+
+  <h2 class="h5 mb-3">Stock</h2>
+  <table class="table table-hover align-middle mb-4">
+    <thead class="table-light">
+    <tr>
+      <th class="col-3">Warehouse</th>
+      <th>Quantity</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for stock in material.stock_balances.all %}
+      <tr>
+        <td>{{ stock.warehouse.name }}</td>
+        <td>{{ stock.quantity }}</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="2" class="text-center text-muted py-3">
+          No stock yet.
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <h2 class="h5 mb-3">Suppliers</h2>
+  <table class="table table-hover align-middle mb-4">
+    <thead class="table-light">
+    <tr>
+      <th class="col-3">Supplier</th>
+      <th>Purchase price</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for offer in material.supplier_offers.all %}
+      <tr>
+        <td>{{ offer.supplier.name }}</td>
+        <td>{{ offer.purchase_price }}</td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="2" class="text-center text-muted py-3">
+          No suppliers yet.
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+    </div>
+  </div>
+{% endblock %}
