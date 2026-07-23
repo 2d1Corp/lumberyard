@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.db import models
 from django.forms import CheckboxSelectMultiple
+from django.contrib.auth.admin import UserAdmin
 
 from .models import (
     Category,
@@ -14,7 +15,6 @@ from .models import (
 
 admin.site.register(Category)
 admin.site.register(Supplier)
-admin.site.register(Worker)
 admin.site.register(StockBalance)
 admin.site.register(MaterialSupplier)
 
@@ -37,3 +37,36 @@ class MaterialAdmin(admin.ModelAdmin):
     )
     list_filter = ("category", "unit")
     search_fields = ("sku", "name")
+
+@admin.register(Worker)
+class WorkerAdmin(UserAdmin):
+    fieldsets = UserAdmin.fieldsets + (
+        (
+            "Lumberyard",
+            {
+                "fields": (
+                    "phone_number",
+                ),
+            },
+        ),
+    )
+
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        (
+            "Lumberyard",
+            {
+                "fields": (
+                    "phone_number",
+                ),
+            },
+        ),
+    )
+
+    list_display = (
+        "username",
+        "first_name",
+        "last_name",
+        "phone_number",
+        "is_staff",
+        "is_active",
+    )

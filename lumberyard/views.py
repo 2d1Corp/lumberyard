@@ -1,14 +1,26 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+)
 from django.db.models import Q
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DetailView, ListView
 
-from .models import Material, Supplier, Warehouse, Worker
+from .forms import WorkerCreationForm
+from .models import Category, Material, Supplier, Warehouse, Worker
 
 
 def index(request):
-    return render(request, "lumberyard/index.html")
+    context = {
+        "categories": Category.objects.all(),
+    }
+    return render(
+        request,
+        "lumberyard/index.html",
+        context,
+    )
 
 
 @login_required
@@ -46,3 +58,10 @@ class MaterialDetailView(LoginRequiredMixin, DetailView):
         "stock_balances__warehouse",
         "supplier_offers__supplier",
     )
+
+
+class WorkerCreateView(PermissionRequiredMixin, CreateView):
+    form_class = WorkerCreationForm
+    template_name = "lumberyard/worker_form.html"
+    success_url = reverse_lazy("dashboard")
+    permission_required = "lumberyard.add_worker"

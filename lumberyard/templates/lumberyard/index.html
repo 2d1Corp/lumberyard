@@ -1,6 +1,65 @@
 {% extends "lumberyard/public_base.html" %}
+
 {% block title %}Home | Lumberyard{% endblock %}
+
 {% block content %}
-  <h1>Lumberyard</h1>
-  <p>Lumberyard management system</p>
+  <section class="public-hero">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <p class="public-hero-eyebrow">
+          Timber and lumber supply
+        </p>
+
+        <h1 class="public-hero-title">
+          Quality timber for every project
+        </h1>
+
+        <p class="public-hero-description">
+          Materials for construction, production and woodworking,
+          organized from supplier to warehouse.
+        </p>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="public-hero-visual" aria-hidden="true">
+          <i class="bi bi-tree-fill"></i>
+          <span>Lumberyard</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="public-section">
+    <div class="public-section-heading">
+      <div>
+        <p class="public-hero-eyebrow mb-2">
+          Our assortment
+        </p>
+        <h2 class="mb-0">Material categories</h2>
+      </div>
+    </div>
+
+    <div class="row g-3">
+      {% for category in categories %}
+        <div class="col-sm-6 col-lg-4">
+          <article class="public-category-card">
+          <span class="public-category-icon">
+            <i class="bi bi-box-seam"></i>
+          </span>
+
+            <h3>{{ category.name }}</h3>
+
+            <p>
+              Timber materials for construction and woodworking.
+            </p>
+          </article>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <p class="text-secondary mb-0">
+            Material categories will appear here soon.
+          </p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
 {% endblock %}

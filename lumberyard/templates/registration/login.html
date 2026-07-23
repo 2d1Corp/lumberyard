@@ -1,18 +1,21 @@
-{% extends "lumberyard/base.html" %}
+{% extends "registration/auth_base.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}Login | Lumberyard{% endblock %}
 
-{% block body %}
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-md-4">
-        <h2 class="mb-4 text-center">Login</h2>
-        <form method="post">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-primary w-100">Log in</button>
-        </form>
-      </div>
-    </div>
-  </div>
+{% block auth_heading %}Welcome back{% endblock %}
+
+{% block auth_subtitle %}
+  Log in to the lumberyard dashboard
+{% endblock %}
+
+{% block auth_content %}
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form|crispy }}
+
+    <button type="submit" class="btn btn-primary w-100 mt-2">
+      Log in
+    </button>
+  </form>
 {% endblock %}

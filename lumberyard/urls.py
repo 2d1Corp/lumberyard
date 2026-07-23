@@ -15,5 +15,10 @@ urlpatterns = [
         "materials/<int:pk>/",
         views.MaterialDetailView.as_view(),
         name="material-detail",
-    )
+    ),
+    path(
+        "workers/create/",
+        views.WorkerCreateView.as_view(),
+        name="worker-create",
+    ),
 ]

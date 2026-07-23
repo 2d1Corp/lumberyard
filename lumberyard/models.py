@@ -2,6 +2,9 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.db import models
 
+from phonenumber_field.modelfields import PhoneNumberField
+
+
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -31,8 +34,9 @@ class Warehouse(models.Model):
     workers = models.ManyToManyField(
         "Worker",
         related_name="warehouses",
-        blank=True
-    ) #lazy reference, forward references. Assigned before class Worker model
+        blank=True,
+    )
+
     class Meta:
         ordering = ["name"]
         verbose_name = "warehouse"
@@ -43,14 +47,18 @@ class Warehouse(models.Model):
 
 
 class Worker(AbstractUser):
-    phone_number = models.CharField(max_length=32, unique=True)
+    phone_number = PhoneNumberField(unique=True)
+    REQUIRED_FIELDS = ["phone_number"]
 
     class Meta:
         verbose_name = "worker"
         verbose_name_plural = "workers"
 
     def __str__(self):
-        return f"{self.username} {self.first_name} {self.last_name} {self.phone_number}"
+        return (
+            f"{self.username} {self.first_name} "
+            f"{self.last_name} {self.phone_number}"
+        )
 
 
 class Material(models.Model):
@@ -72,7 +80,7 @@ class Material(models.Model):
     category = models.ForeignKey(
         Category,
         on_delete=models.PROTECT,
-        related_name="materials"
+        related_name="materials",
     )
     unit = models.CharField(
         max_length=10,

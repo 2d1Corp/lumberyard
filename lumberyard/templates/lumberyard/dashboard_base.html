@@ -1,34 +1,74 @@
 {% extends "lumberyard/base.html" %}
 
 {% block body %}
-  <nav class="navbar navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand fw-semibold" href="{% url 'dashboard' %}">
-        Lumberyard
+  <div class="dashboard-shell">
+    <aside class="dashboard-sidebar">
+      <a class="dashboard-brand" href="{% url 'dashboard' %}">
+        <span class="dashboard-brand-icon" aria-hidden="true">
+          <i class="bi bi-tree-fill"></i>
+        </span>
+        <span>Lumberyard</span>
       </a>
-      <div class="navbar-nav flex-row gap-3 me-auto">
-        <a class="nav-link" href="{% url 'dashboard' %}">
-          Dashboard
+
+      <nav class="dashboard-nav" aria-label="Dashboard navigation">
+        <a
+          class="dashboard-nav-link{% if request.resolver_match.url_name == 'dashboard' %} active{% endif %}"
+          href="{% url 'dashboard' %}"
+        >
+          <i class="bi bi-grid-1x2"></i>
+          <span>Dashboard</span>
         </a>
-        <a class="nav-link" href="{% url 'material-list' %}">
-          Materials
+
+        <a
+          class="dashboard-nav-link{% if request.resolver_match.url_name == 'material-list' or request.resolver_match.url_name == 'material-detail' %} active{% endif %}"
+          href="{% url 'material-list' %}"
+        >
+          <i class="bi bi-box-seam"></i>
+          <span>Materials</span>
         </a>
-      </div>
-      <div class="d-flex align-items-center gap-3">
-        <span class="navbar-text text-white-50">
+        {% if perms.lumberyard.add_worker %}
+          <a
+            class="dashboard-nav-link{% if request.resolver_match.url_name == 'worker-create' %} active{% endif %}"
+            href="{% url 'worker-create' %}"
+          >
+            <i class="bi bi-person-plus"></i>
+            <span>Add worker</span>
+          </a>
+        {% endif %}
+
+        <a class="dashboard-nav-link" href="{% url 'index' %}">
+          <i class="bi bi-globe2"></i>
+          <span>Public site</span>
+        </a>
+      </nav>
+
+      <div class="dashboard-user">
+        <span class="dashboard-user-avatar" aria-hidden="true">
+          <i class="bi bi-person"></i>
+        </span>
+
+        <span class="dashboard-user-name">
           {{ user.username }}
         </span>
-        <form action="{% url 'logout' %}" method="post">
+
+        <form class="mb-0 ms-auto" action="{% url 'logout' %}" method="post">
           {% csrf_token %}
-          <button type="submit" class="btn btn-sm btn-outline-light">
-            Logout
+          <button
+            class="dashboard-logout"
+            type="submit"
+            title="Log out"
+            aria-label="Log out"
+          >
+            <i class="bi bi-box-arrow-right"></i>
           </button>
         </form>
       </div>
-    </div>
-  </nav>
-  <main class="container py-4">
-    {% block content %}
-    {% endblock %}
-  </main>
+    </aside>
+
+    <main class="dashboard-main">
+      <div class="dashboard-content">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
 {% endblock %}
