@@ -149,6 +149,9 @@ def toggle_replenishment(request, pk, stock_pk):
         stock.replenishment_requested_by = None
         stock.save(update_fields=["replenishment_requested_at", "replenishment_requested_by"])
         messages.success(request, "Removed from replenishment list.")
+    next_url = request.POST.get("next") or request.GET.get("next")
+    if next_url:
+        return redirect(next_url)
     return redirect("material-detail", pk=pk)
 
 
