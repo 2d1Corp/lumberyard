@@ -12,9 +12,9 @@
   <form
       action="{% url 'material-list' %}"
       method="get"
-      class="row g-2 mb-4"
+      class="d-flex gap-2 mb-4"
   >
-    <div class="col-md-6">
+    <div class="input-group input-group-sm" style="max-width: 24rem;">
       <input
           type="search"
           name="query"
@@ -23,20 +23,15 @@
           placeholder="Search by name or SKU"
           aria-label="Search materials"
       >
-    </div>
-
-    <div class="col-auto">
-      <button type="submit" class="btn btn-sm btn-primary">
-        Search
+      <button type="submit" class="btn btn-primary">
+        <i class="bi bi-search"></i>
       </button>
     </div>
 
     {% if request.GET.query %}
-      <div class="col-auto">
-        <a href="{% url 'material-list' %}" class="btn btn-sm btn-outline-secondary">
-          Clear
-        </a>
-      </div>
+      <a href="{% url 'material-list' %}" class="btn btn-sm btn-outline-secondary">
+        Clear
+      </a>
     {% endif %}
   </form>
   <div class="table-responsive">
@@ -49,6 +44,7 @@
         <th>Unit</th>
         <th>Stock</th>
         <th>Sale price</th>
+        <th class="text-end">Replenish</th>
       </tr>
       </thead>
       <tbody>
@@ -62,10 +58,29 @@
           <td>{{ material.get_unit_display }}</td>
           <td>{{ material.total_stock|default:"0" }}</td>
           <td>{{ material.sale_price }}</td>
+          <td class="text-end">
+            {% if material.stock_count %}
+              <form method="post"
+                    action="{% url 'material-toggle-all-replenishment' material.pk %}">
+                {% csrf_token %}
+                {% if material.stock_count == material.requested_count %}
+                  <button type="submit" class="btn btn-sm btn-link p-0 text-warning"
+                          title="Remove all from replenishment list">
+                    <i class="bi bi-cart-dash-fill fs-5"></i>
+                  </button>
+                {% else %}
+                  <button type="submit" class="btn btn-sm btn-link p-0 text-secondary"
+                          title="Add all to replenishment list">
+                    <i class="bi bi-cart-plus fs-5"></i>
+                  </button>
+                {% endif %}
+              </form>
+            {% endif %}
+          </td>
         </tr>
       {% empty %}
         <tr>
-          <td colspan="6" class="text-center text-muted py-4">
+          <td colspan="7" class="text-center text-muted py-4">
             No materials found.
           </td>
         </tr>

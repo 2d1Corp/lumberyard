@@ -12,8 +12,17 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
+from django.contrib.messages import ERROR as MESSAGE_ERROR
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Message tags mapped to Bootstrap alert classes
+MESSAGE_TAGS = {
+    MESSAGE_ERROR: "danger",
+}
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/

@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.db.models import Q, Sum, ProtectedError
+from django.db.models import Count, Q, Sum, ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -48,6 +48,10 @@ class MaterialListView(LoginRequiredMixin, ListView):
     model = Material
     queryset = Material.objects.select_related("category").annotate(
         total_stock=Sum("stock_balances__quantity"),
+        requested_count=Count("stock_balances", filter=Q(
+            stock_balances__replenishment_requested_at__isnull=False
+        )),
+        stock_count=Count("stock_balances"),
     )
     paginate_by = 5
 
@@ -107,8 +111,13 @@ class MaterialDeleteView(LoginRequiredMixin, DeleteView):
 class WorkerCreateView(PermissionRequiredMixin, CreateView):
     form_class = WorkerCreationForm
     template_name = "lumberyard/worker_form.html"
-    success_url = reverse_lazy("dashboard")
+    success_url = reverse_lazy("worker-list")
     permission_required = "lumberyard.add_worker"
+
+
+class WorkerListView(LoginRequiredMixin, ListView):
+    model = Worker
+    queryset = Worker.objects.all().order_by("username")
 
 
 class ReplenishmentListView(LoginRequiredMixin, ListView):
@@ -141,6 +150,32 @@ def toggle_replenishment(request, pk, stock_pk):
         stock.save(update_fields=["replenishment_requested_at", "replenishment_requested_by"])
         messages.success(request, "Removed from replenishment list.")
     return redirect("material-detail", pk=pk)
+
+
+@login_required
+def toggle_material_replenishment(request, pk):
+    """Toggle replenishment for ALL stock balances of a material at once."""
+    get_object_or_404(Material, pk=pk)
+    stocks = StockBalance.objects.filter(material_id=pk)
+    if not stocks.exists():
+        messages.error(request, "This material has no stock to replenish.")
+        return redirect("material-detail", pk=pk)
+
+    all_requested = not stocks.filter(replenishment_requested_at__isnull=True).exists()
+    if all_requested:
+        stocks.update(
+            replenishment_requested_at=None,
+            replenishment_requested_by=None,
+        )
+        messages.success(request, "Removed all stock of this material from the list.")
+    else:
+        now = timezone.now()
+        for stock in stocks.filter(replenishment_requested_at__isnull=True):
+            stock.replenishment_requested_at = now
+            stock.replenishment_requested_by = request.user
+            stock.save(update_fields=["replenishment_requested_at", "replenishment_requested_by"])
+        messages.success(request, "Added all stock of this material to the list.")
+    return redirect("material-list")
 
 
 

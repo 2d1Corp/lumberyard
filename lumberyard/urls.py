@@ -32,6 +32,11 @@ urlpatterns = [
         name="material-delete",
     ),
     path(
+        "workers/",
+        views.WorkerListView.as_view(),
+        name="worker-list",
+    ),
+    path(
         "workers/create/",
         views.WorkerCreateView.as_view(),
         name="worker-create",
@@ -40,6 +45,11 @@ urlpatterns = [
         "materials/<int:pk>/stock/<int:stock_pk>/toggle-replenishment/",
         views.toggle_replenishment,
         name="material-toggle-replenishment",
+    ),
+    path(
+        "materials/<int:pk>/toggle-replenishment/",
+        views.toggle_material_replenishment,
+        name="material-toggle-all-replenishment",
     ),
     path(
         "replenishment/",

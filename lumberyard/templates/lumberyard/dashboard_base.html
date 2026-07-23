@@ -33,15 +33,13 @@
           <i class="bi bi-cart-plus"></i>
           <span>Replenishment</span>
         </a>
-        {% if perms.lumberyard.add_worker %}
-          <a
-              class="dashboard-nav-link{% if request.resolver_match.url_name == 'worker-create' %} active{% endif %}"
-              href="{% url 'worker-create' %}"
-          >
-            <i class="bi bi-person-plus"></i>
-            <span>Add worker</span>
-          </a>
-        {% endif %}
+        <a
+            class="dashboard-nav-link{% if request.resolver_match.url_name == 'worker-list' or request.resolver_match.url_name == 'worker-create' %} active{% endif %}"
+            href="{% url 'worker-list' %}"
+        >
+          <i class="bi bi-people"></i>
+          <span>Workers</span>
+        </a>
 
         <a class="dashboard-nav-link" href="{% url 'index' %}">
           <i class="bi bi-globe2"></i>
