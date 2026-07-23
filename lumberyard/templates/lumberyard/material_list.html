@@ -5,7 +5,7 @@
 {% block content %}
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="mb-0">Materials</h1>
-    <a class="btn btn-primary" href="{% url 'material-create' %}">
+    <a class="btn btn-sm btn-primary" href="{% url 'material-create' %}">
       <i class="bi bi-plus-lg me-1"></i> Add material
     </a>
   </div>
@@ -26,14 +26,14 @@
     </div>
 
     <div class="col-auto">
-      <button type="submit" class="btn btn-primary">
+      <button type="submit" class="btn btn-sm btn-primary">
         Search
       </button>
     </div>
 
     {% if request.GET.query %}
       <div class="col-auto">
-        <a href="{% url 'material-list' %}" class="btn btn-outline-secondary">
+        <a href="{% url 'material-list' %}" class="btn btn-sm btn-outline-secondary">
           Clear
         </a>
       </div>

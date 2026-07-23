@@ -21,11 +21,11 @@
         </div>
 
         {% if view.object %}
-          <a class="btn btn-outline-secondary" href="{% url 'material-detail' view.object.pk %}">
+          <a class="btn btn-sm btn-outline-secondary" href="{% url 'material-detail' view.object.pk %}">
             Cancel
           </a>
         {% else %}
-          <a class="btn btn-outline-secondary" href="{% url 'material-list' %}">
+          <a class="btn btn-sm btn-outline-secondary" href="{% url 'material-list' %}">
             Cancel
           </a>
         {% endif %}
@@ -37,7 +37,7 @@
             {% csrf_token %}
             {{ form|crispy }}
 
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-sm btn-primary">
               {% if view.object %}Save changes{% else %}Add product{% endif %}
             </button>
           </form>

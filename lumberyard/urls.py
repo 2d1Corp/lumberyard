@@ -36,4 +36,14 @@ urlpatterns = [
         views.WorkerCreateView.as_view(),
         name="worker-create",
     ),
+    path(
+        "materials/<int:pk>/stock/<int:stock_pk>/toggle-replenishment/",
+        views.toggle_replenishment,
+        name="material-toggle-replenishment",
+    ),
+    path(
+        "replenishment/",
+        views.ReplenishmentListView.as_view(),
+        name="replenishment-list",
+    ),
 ]

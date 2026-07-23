@@ -1,0 +1,42 @@
+{% extends "lumberyard/dashboard_base.html" %}
+
+{% block title %}Replenishment list | Lumberyard{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4">Replenishment list</h1>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Material</th>
+          <th>Warehouse</th>
+          <th>Quantity</th>
+          <th>Requested by</th>
+          <th>Requested at</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for stock in stockbalance_list %}
+          <tr>
+            <td class="fw-semibold">
+              <a href="{% url 'material-detail' stock.material_id %}">
+                {{ stock.material.name }}
+              </a>
+            </td>
+            <td>{{ stock.warehouse.name }}</td>
+            <td>{{ stock.quantity }}</td>
+            <td>{{ stock.replenishment_requested_by|default:"&mdash;" }}</td>
+            <td>{{ stock.replenishment_requested_at|date:"Y-m-d H:i" }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+              No items awaiting replenishment.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

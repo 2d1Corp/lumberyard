@@ -10,4 +10,8 @@
   <p>Suppliers: {{ supplier_count }}</p>
   <p>Warehouses: {{ warehouse_count }}</p>
   <p>Workers: {{ worker_count }}</p>
+  <p>
+    Awaiting replenishment:
+    <a href="{% url 'replenishment-list' %}">{{ replenishment_count }}</a>
+  </p>
 {% endblock %}

@@ -31,11 +31,6 @@ class Supplier(models.Model):
 
 class Warehouse(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    workers = models.ManyToManyField(
-        "Worker",
-        related_name="warehouses",
-        blank=True,
-    )
 
     class Meta:
         ordering = ["name"]
@@ -135,6 +130,14 @@ class StockBalance(models.Model):
         max_digits=12,
         decimal_places=3,
         validators=[MinValueValidator(0)],
+    )
+    replenishment_requested_at = models.DateTimeField(null=True, blank=True)
+    replenishment_requested_by = models.ForeignKey(
+        "Worker",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="requested_replenishments",
     )
 
     class Meta:

@@ -26,6 +26,13 @@
           <i class="bi bi-box-seam"></i>
           <span>Materials</span>
         </a>
+        <a
+            class="dashboard-nav-link{% if request.resolver_match.url_name == 'replenishment-list' %} active{% endif %}"
+            href="{% url 'replenishment-list' %}"
+        >
+          <i class="bi bi-cart-plus"></i>
+          <span>Replenishment</span>
+        </a>
         {% if perms.lumberyard.add_worker %}
           <a
               class="dashboard-nav-link{% if request.resolver_match.url_name == 'worker-create' %} active{% endif %}"
