@@ -42,6 +42,11 @@ urlpatterns = [
         name="worker-create",
     ),
     path(
+        "workers/<int:pk>/delete/",
+        views.WorkerDeleteView.as_view(),
+        name="worker-delete",
+    ),
+    path(
         "materials/<int:pk>/stock/<int:stock_pk>/toggle-replenishment/",
         views.toggle_replenishment,
         name="material-toggle-replenishment",

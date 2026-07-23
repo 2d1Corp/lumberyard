@@ -120,6 +120,13 @@ class WorkerListView(LoginRequiredMixin, ListView):
     queryset = Worker.objects.all().order_by("username")
 
 
+class WorkerDeleteView(PermissionRequiredMixin, DeleteView):
+    model = Worker
+    template_name = "lumberyard/worker_confirm_delete.html"
+    success_url = reverse_lazy("worker-list")
+    permission_required = "lumberyard.delete_worker"
+
+
 class ReplenishmentListView(LoginRequiredMixin, ListView):
     model = StockBalance
     template_name = "lumberyard/replenishment_list.html"
