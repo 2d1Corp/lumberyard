@@ -1,0 +1,48 @@
+{% extends "lumberyard/dashboard_base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if view.object %}Edit material{% else %}Add material{% endif %} | Lumberyard{% endblock %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-xl-7">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h1 class="h2 mb-1">
+            {% if view.object %}Edit material{% else %}Add material{% endif %}
+          </h1>
+          <p class="text-secondary mb-0">
+            {% if view.object %}
+              Update the product details.
+            {% else %}
+              Add a new product to the catalog.
+            {% endif %}
+          </p>
+        </div>
+
+        {% if view.object %}
+          <a class="btn btn-outline-secondary" href="{% url 'material-detail' view.object.pk %}">
+            Cancel
+          </a>
+        {% else %}
+          <a class="btn btn-outline-secondary" href="{% url 'material-list' %}">
+            Cancel
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="card">
+        <div class="card-body p-4">
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form|crispy }}
+
+            <button type="submit" class="btn btn-primary">
+              {% if view.object %}Save changes{% else %}Add product{% endif %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

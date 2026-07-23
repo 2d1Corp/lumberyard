@@ -3,7 +3,12 @@
 {% block title %}Materials | Lumberyard{% endblock %}
 
 {% block content %}
-  <h1>Materials</h1>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">Materials</h1>
+    <a class="btn btn-primary" href="{% url 'material-create' %}">
+      <i class="bi bi-plus-lg me-1"></i> Add material
+    </a>
+  </div>
   <form
       action="{% url 'material-list' %}"
       method="get"
@@ -42,6 +47,7 @@
         <th>SKU</th>
         <th>Category</th>
         <th>Unit</th>
+        <th>Stock</th>
         <th>Sale price</th>
       </tr>
       </thead>
@@ -51,16 +57,15 @@
           <td class="fw-semibold">
             <a href="{% url 'material-detail' material.pk %}">{{ material.name }}</a>
           </td>
-          <td>
-           {{ material.sku }}
-          </td>
+          <td>{{ material.sku }}</td>
           <td>{{ material.category.name }}</td>
           <td>{{ material.get_unit_display }}</td>
+          <td>{{ material.total_stock|default:"0" }}</td>
           <td>{{ material.sale_price }}</td>
         </tr>
       {% empty %}
         <tr>
-          <td colspan="5" class="text-center text-muted py-4">
+          <td colspan="6" class="text-center text-muted py-4">
             No materials found.
           </td>
         </tr>

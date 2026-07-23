@@ -12,24 +12,24 @@
 
       <nav class="dashboard-nav" aria-label="Dashboard navigation">
         <a
-          class="dashboard-nav-link{% if request.resolver_match.url_name == 'dashboard' %} active{% endif %}"
-          href="{% url 'dashboard' %}"
+            class="dashboard-nav-link{% if request.resolver_match.url_name == 'dashboard' %} active{% endif %}"
+            href="{% url 'dashboard' %}"
         >
           <i class="bi bi-grid-1x2"></i>
           <span>Dashboard</span>
         </a>
 
         <a
-          class="dashboard-nav-link{% if request.resolver_match.url_name == 'material-list' or request.resolver_match.url_name == 'material-detail' %} active{% endif %}"
-          href="{% url 'material-list' %}"
+            class="dashboard-nav-link{% if request.resolver_match.url_name == 'material-list' or request.resolver_match.url_name == 'material-detail' %} active{% endif %}"
+            href="{% url 'material-list' %}"
         >
           <i class="bi bi-box-seam"></i>
           <span>Materials</span>
         </a>
         {% if perms.lumberyard.add_worker %}
           <a
-            class="dashboard-nav-link{% if request.resolver_match.url_name == 'worker-create' %} active{% endif %}"
-            href="{% url 'worker-create' %}"
+              class="dashboard-nav-link{% if request.resolver_match.url_name == 'worker-create' %} active{% endif %}"
+              href="{% url 'worker-create' %}"
           >
             <i class="bi bi-person-plus"></i>
             <span>Add worker</span>
@@ -54,10 +54,10 @@
         <form class="mb-0 ms-auto" action="{% url 'logout' %}" method="post">
           {% csrf_token %}
           <button
-            class="dashboard-logout"
-            type="submit"
-            title="Log out"
-            aria-label="Log out"
+              class="dashboard-logout"
+              type="submit"
+              title="Log out"
+              aria-label="Log out"
           >
             <i class="bi bi-box-arrow-right"></i>
           </button>
@@ -67,6 +67,16 @@
 
     <main class="dashboard-main">
       <div class="dashboard-content">
+        {% if messages %}
+          <div class="mb-3">
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
         {% block content %}{% endblock %}
       </div>
     </main>

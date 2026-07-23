@@ -17,6 +17,21 @@ urlpatterns = [
         name="material-detail",
     ),
     path(
+        "materials/create/",
+        views.MaterialCreateView.as_view(),
+        name="material-create"
+    ),
+    path(
+        "materials/<int:pk>/update/",
+        views.MaterialUpdateView.as_view(),
+        name="material-update",
+    ),
+    path(
+        "materials/<int:pk>/delete/",
+        views.MaterialDeleteView.as_view(),
+        name="material-delete",
+    ),
+    path(
         "workers/create/",
         views.WorkerCreateView.as_view(),
         name="worker-create",
