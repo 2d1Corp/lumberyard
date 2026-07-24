@@ -81,4 +81,40 @@ urlpatterns = [
         views.SupplierDeleteView.as_view(),
         name="supplier-delete"
     ),
+    path(
+        "categories/",
+        views.CategoryListView.as_view(),
+        name="category-list"
+    ),
+    path(
+        "categories/create/",
+        views.CategoryCreateView.as_view(),
+        name="category-create"
+    ),
+    path(
+        "categories/<int:pk>/update/",
+        views.CategoryUpdateView.as_view(),
+        name="category-update"
+    ),
+    path(
+        "categories/<int:pk>/delete/",
+        views.CategoryDeleteView.as_view(),
+        name="category-delete"),
+
+    path(
+        "warehouses/",
+        views.WarehouseListView.as_view(),
+        name="warehouse-list"),
+    path(
+        "warehouses/create/",
+        views.WarehouseCreateView.as_view(),
+        name="warehouse-create"),
+    path(
+        "warehouses/<int:pk>/update/",
+        views.WarehouseUpdateView.as_view(),
+        name="warehouse-update"),
+    path(
+        "warehouses/<int:pk>/delete/",
+        views.WarehouseDeleteView.as_view(),
+        name="warehouse-delete"),
 ]

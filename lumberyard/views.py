@@ -19,7 +19,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from .forms import WorkerCreationForm, MaterialForm, SupplierForm
+from .forms import WorkerCreationForm, MaterialForm, SupplierForm, CategoryForm, WarehouseForm
 from .models import Category, Material, StockBalance, Supplier, Warehouse, Worker
 
 
@@ -260,4 +260,72 @@ class SupplierDeleteView(LoginRequiredMixin, DeleteView):
                 "Cannot delete supplier because it still has offers."
             )
             return redirect("supplier-list")
+        return redirect(self.get_success_url())
+
+
+class CategoryListView(LoginRequiredMixin, ListView):
+    model = Category
+
+
+class CategoryCreateView(LoginRequiredMixin, CreateView):
+    form_class = CategoryForm
+    template_name = "lumberyard/category_form.html"
+    success_url = reverse_lazy("category-list")
+
+
+class CategoryUpdateView(LoginRequiredMixin, UpdateView):
+    model = Category
+    form_class = CategoryForm
+    template_name = "lumberyard/category_form.html"
+    success_url = reverse_lazy("category-list")
+
+
+class CategoryDeleteView(LoginRequiredMixin, DeleteView):
+    model = Category
+    template_name = "lumberyard/category_confirm_delete.html"
+    success_url = reverse_lazy("category-list")
+
+    def form_valid(self, form):
+        try:
+            self.object.delete()
+        except ProtectedError:
+            messages.error(
+                self.request,
+                "Cannot delete category because it still has materials.",
+            )
+            return redirect("category-list")
+        return redirect(self.get_success_url())
+
+
+class WarehouseListView(LoginRequiredMixin, ListView):
+    model = Warehouse
+
+
+class WarehouseCreateView(LoginRequiredMixin, CreateView):
+    form_class = WarehouseForm
+    template_name = "lumberyard/warehouse_form.html"
+    success_url = reverse_lazy("warehouse-list")
+
+
+class WarehouseUpdateView(LoginRequiredMixin, UpdateView):
+    model = Warehouse
+    form_class = WarehouseForm
+    template_name = "lumberyard/warehouse_form.html"
+    success_url = reverse_lazy("warehouse-list")
+
+
+class WarehouseDeleteView(LoginRequiredMixin, DeleteView):
+    model = Warehouse
+    template_name = "lumberyard/warehouse_confirm_delete.html"
+    success_url = reverse_lazy("warehouse-list")
+
+    def form_valid(self, form):
+        try:
+            self.object.delete()
+        except ProtectedError:
+            messages.error(
+                self.request,
+                "Cannot delete warehouse because it still has stock.",
+            )
+            return redirect("warehouse-list")
         return redirect(self.get_success_url())
