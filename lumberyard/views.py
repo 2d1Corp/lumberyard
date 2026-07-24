@@ -1,3 +1,4 @@
+from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (
@@ -8,6 +9,7 @@ from django.db.models import Count, Q, Sum, ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.generic import (
     CreateView,
     DetailView,
@@ -140,6 +142,7 @@ class ReplenishmentListView(LoginRequiredMixin, ListView):
 
 
 @login_required
+@require_POST
 def toggle_replenishment(request, pk, stock_pk):
     stock = get_object_or_404(
         StockBalance,
@@ -156,15 +159,18 @@ def toggle_replenishment(request, pk, stock_pk):
         stock.replenishment_requested_by = None
         stock.save(update_fields=["replenishment_requested_at", "replenishment_requested_by"])
         messages.success(request, "Removed from replenishment list.")
-    next_url = request.POST.get("next") or request.GET.get("next")
-    if next_url:
+    next_url = request.POST.get("next")
+    if next_url and url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
         return redirect(next_url)
     return redirect("material-detail", pk=pk)
 
 
 @login_required
 def toggle_material_replenishment(request, pk):
-    """Toggle replenishment for ALL stock balances of a material at once."""
     get_object_or_404(Material, pk=pk)
     stocks = StockBalance.objects.filter(material_id=pk)
     if not stocks.exists():

@@ -71,3 +71,73 @@ class MaterialListViewTests(TestCase):
             [self.name_match, self.sku_match],
             ordered=False,
         )
+
+
+class ToggleReplenishmentViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        category = Category.objects.create(name="Boards")
+        material = Material.objects.create(
+            name="Oak Board",
+            sku="OAK-BOARD-001",
+            category=category,
+        )
+        warehouse = Warehouse.objects.create(name="Main Warehouse")
+        cls.user = Worker.objects.create_user(
+            username="warehouse-worker",
+            password="test-password",
+            phone_number="+10000000001",
+        )
+        cls.stock = StockBalance.objects.create(
+            material=material,
+            warehouse=warehouse,
+            quantity=10,
+        )
+        cls.url = reverse(
+            "material-toggle-replenishment",
+            args=[material.pk, cls.stock.pk],
+        )
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_get_does_not_request_replenishment(self):
+        response = self.client.get(self.url)
+
+        self.stock.refresh_from_db()
+
+        self.assertEqual(response.status_code, 405)
+        self.assertIsNone(self.stock.replenishment_requested_at)
+
+    def test_post_requests_replenishment(self):
+        response = self.client.post(self.url)
+
+        self.stock.refresh_from_db()
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIsNotNone(self.stock.replenishment_requested_at)
+        self.assertEqual(self.stock.replenishment_requested_by, self.user)
+
+    def test_post_ignores_external_next_url(self):
+        response = self.client.post(
+            self.url,
+            {"next": "https://attacker.example/phishing"},
+        )
+
+        self.assertEqual(
+            response.url,
+            reverse(
+                "material-detail",
+                args=[self.stock.material_id],
+            ),
+        )
+
+    def test_post_accepts_local_next_url(self):
+        next_url = reverse("replenishment-list")
+
+        response = self.client.post(
+            self.url,
+            {"next": next_url},
+        )
+
+        self.assertEqual(response.url, next_url)
