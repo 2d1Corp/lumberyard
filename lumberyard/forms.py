@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Worker, Material
+from .models import Worker, Material, Supplier
 
 
 class WorkerCreationForm(UserCreationForm):
@@ -31,3 +31,9 @@ class MaterialForm(forms.ModelForm):
             "length_mm",
             "description",
         )
+
+
+class SupplierForm(forms.ModelForm):
+    class Meta:
+        model = Supplier
+        fields = ("name",)

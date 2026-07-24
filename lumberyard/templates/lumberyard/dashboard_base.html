@@ -27,6 +27,13 @@
           <span>Materials</span>
         </a>
         <a
+            class="dashboard-nav-link{% if request.resolver_match.url_name|slice:':8' == 'supplier' %} active{% endif %}"
+            href="{% url 'supplier-list' %}"
+        >
+          <i class="bi bi-truck"></i>
+          <span>Suppliers</span>
+        </a>
+        <a
             class="dashboard-nav-link{% if request.resolver_match.url_name == 'replenishment-list' %} active{% endif %}"
             href="{% url 'replenishment-list' %}"
         >

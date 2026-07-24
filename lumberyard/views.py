@@ -19,7 +19,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from .forms import WorkerCreationForm, MaterialForm
+from .forms import WorkerCreationForm, MaterialForm, SupplierForm
 from .models import Category, Material, StockBalance, Supplier, Warehouse, Worker
 
 
@@ -227,3 +227,37 @@ def stockbalance_update(request, material_pk, warehouse_pk):
             messages.success(request, "Stock quantity updated.")
 
     return redirect("material-detail", pk=material_pk)
+
+
+class SupplierListView(LoginRequiredMixin, ListView):
+    model = Supplier
+
+
+class SupplierCreateView(LoginRequiredMixin, CreateView):
+    form_class = SupplierForm
+    template_name = "lumberyard/supplier_form.html"
+    success_url = reverse_lazy("supplier-list")
+
+
+class SupplierUpdateView(LoginRequiredMixin, UpdateView):
+    model = Supplier
+    form_class = SupplierForm
+    template_name = "lumberyard/supplier_form.html"
+    success_url = reverse_lazy("supplier-list")
+
+
+class SupplierDeleteView(LoginRequiredMixin, DeleteView):
+    model = Supplier
+    template_name = "lumberyard/supplier_confirm_delete.html"
+    success_url = reverse_lazy("supplier-list")
+
+    def form_valid(self, form):
+        try:
+            self.object.delete()
+        except ProtectedError:
+            messages.error(
+                self.request,
+                "Cannot delete supplier because it still has offers."
+            )
+            return redirect("supplier-list")
+        return redirect(self.get_success_url())

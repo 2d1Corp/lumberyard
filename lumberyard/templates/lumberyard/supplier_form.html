@@ -1,0 +1,30 @@
+{% extends "lumberyard/dashboard_base.html" %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if view.object %}Edit supplier{% else %}Add supplier{% endif %} | Lumberyard{% endblock %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-xl-7">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="h2 mb-1">
+          {% if view.object %}Edit supplier{% else %}Add supplier{% endif %}
+        </h1>
+        <a class="btn btn-sm btn-outline-secondary" href="{% url 'supplier-list' %}">
+          Cancel
+        </a>
+      </div>
+      <div class="card">
+        <div class="card-body p-4">
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-sm btn-primary">
+              {% if view.object %}Save changes{% else %}Add supplier{% endif %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
