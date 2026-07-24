@@ -56,4 +56,9 @@ urlpatterns = [
         views.ReplenishmentListView.as_view(),
         name="replenishment-list",
     ),
+    path(
+        "materials/<int:material_pk>/stock/<int:warehouse_pk>/update/",
+        views.stockbalance_update,
+        name="stockbalance-update",
+    ),
 ]

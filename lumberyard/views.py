@@ -1,3 +1,5 @@
+from decimal import Decimal, InvalidOperation
+
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -76,6 +78,17 @@ class MaterialDetailView(LoginRequiredMixin, DetailView):
         "stock_balances__warehouse",
         "supplier_offers__supplier",
     )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        stock_by_warehouse = {
+            sb.warehouse_id: sb for sb in self.object.stock_balances.all()
+        }
+        context["stock_rows"] = [
+            (warehouse, stock_by_warehouse.get(warehouse.pk))
+            for warehouse in Warehouse.objects.all()
+        ]
+        return context
 
 class MaterialCreateView(LoginRequiredMixin, CreateView):
     form_class = MaterialForm
@@ -175,3 +188,42 @@ def toggle_replenishment(request, pk, stock_pk):
     ):
         return redirect(next_url)
     return redirect("material-detail", pk=pk)
+
+
+@login_required
+@require_POST
+def stockbalance_update(request, material_pk, warehouse_pk):
+    material = get_object_or_404(Material, pk=material_pk)
+    warehouse = get_object_or_404(Warehouse, pk=warehouse_pk)
+    quantity = request.POST.get("quantity", "").strip()
+
+    try:
+        quantity = Decimal(quantity)
+    except (InvalidOperation, ValueError):
+        messages.error(request, "Enter a valid quantity.")
+        return redirect("material-detail", pk=material_pk)
+
+    if quantity < 0:
+        messages.error(request, "Quantity cannot be negative.")
+        return redirect("material-detail", pk=material_pk)
+
+    stock = StockBalance.objects.filter(
+        material=material, warehouse=warehouse
+    ).first()
+
+    if quantity == 0:
+        if stock is not None:
+            stock.delete()
+            messages.success(request, "Stock removed.")
+    else:
+        if stock is None:
+            StockBalance.objects.create(
+                material=material, warehouse=warehouse, quantity=quantity
+            )
+            messages.success(request, "Stock added.")
+        else:
+            stock.quantity = quantity
+            stock.save(update_fields=["quantity"])
+            messages.success(request, "Stock quantity updated.")
+
+    return redirect("material-detail", pk=material_pk)
