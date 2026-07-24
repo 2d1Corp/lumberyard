@@ -127,22 +127,76 @@
         <thead class="table-light">
         <tr>
           <th class="col-3">Supplier</th>
-          <th>Purchase price</th>
+          <th>Purchase price &amp; SKU</th>
+          <th class="text-end">Actions</th>
         </tr>
         </thead>
         <tbody>
         {% for offer in material.supplier_offers.all %}
           <tr>
-            <td>{{ offer.supplier.name }}</td>
-            <td>€{{ offer.purchase_price }}</td>
+            <td class="fw-semibold">{{ offer.supplier.name }}</td>
+            <td>
+              <form method="post"
+                    action="{% url 'offer-save' material.pk %}"
+                    class="d-inline-flex align-items-center gap-2">
+                {% csrf_token %}
+                <input type="hidden" name="supplier" value="{{ offer.supplier.pk }}">
+                <div class="input-group input-group-sm" style="max-width: 7rem;">
+                  <span class="input-group-text">€</span>
+                  <input type="number" name="purchase_price" value="{{ offer.purchase_price }}"
+                         step="any" min="0" class="form-control">
+                </div>
+                <input type="text" name="supplier_sku" value="{{ offer.supplier_sku }}"
+                       class="form-control form-control-sm" style="max-width: 9rem;"
+                       placeholder="Supplier SKU">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">
+                  <i class="bi bi-check-lg"></i>
+                </button>
+              </form>
+            </td>
+            <td class="text-end">
+              <form method="post"
+                    action="{% url 'offer-delete' material.pk offer.supplier.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </form>
+            </td>
           </tr>
         {% empty %}
           <tr>
-            <td colspan="2" class="text-center text-muted py-3">
-              No suppliers yet.
+            <td colspan="3" class="text-center text-muted py-3">
+              No supplier offers yet.
             </td>
           </tr>
         {% endfor %}
+        <tr>
+          <td colspan="3">
+            <form method="post"
+                  action="{% url 'offer-save' material.pk %}"
+                  class="d-flex flex-wrap align-items-center gap-2">
+              {% csrf_token %}
+              <select name="supplier" class="form-select form-select-sm" style="max-width: 12rem;" required>
+                <option value="">Select supplier…</option>
+                {% for supplier in suppliers %}
+                  <option value="{{ supplier.pk }}">{{ supplier.name }}</option>
+                {% endfor %}
+              </select>
+              <div class="input-group input-group-sm" style="max-width: 7rem;">
+                <span class="input-group-text">€</span>
+                <input type="number" name="purchase_price" step="any" min="0"
+                       class="form-control" placeholder="Price" required>
+              </div>
+              <input type="text" name="supplier_sku"
+                     class="form-control form-control-sm" style="max-width: 9rem;"
+                     placeholder="Supplier SKU">
+              <button type="submit" class="btn btn-sm btn-primary">
+                <i class="bi bi-plus-lg me-1"></i> Add offer
+              </button>
+            </form>
+          </td>
+        </tr>
         </tbody>
       </table>
     </div>

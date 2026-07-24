@@ -20,7 +20,7 @@ from django.views.generic import (
     DeleteView,
 )
 from .forms import WorkerCreationForm, MaterialForm, SupplierForm, CategoryForm, WarehouseForm
-from .models import Category, Material, StockBalance, Supplier, Warehouse, Worker
+from .models import Category, Material, StockBalance, Supplier, Warehouse, Worker, MaterialSupplier
 
 
 def index(request):
@@ -88,6 +88,7 @@ class MaterialDetailView(LoginRequiredMixin, DetailView):
             (warehouse, stock_by_warehouse.get(warehouse.pk))
             for warehouse in Warehouse.objects.all()
         ]
+        context["suppliers"] = Supplier.objects.all()
         return context
 
 class MaterialCreateView(LoginRequiredMixin, CreateView):
@@ -329,3 +330,37 @@ class WarehouseDeleteView(LoginRequiredMixin, DeleteView):
             )
             return redirect("warehouse-list")
         return redirect(self.get_success_url())
+
+
+@login_required
+@require_POST
+def offer_save(request, material_pk):
+    material = get_object_or_404(Material, pk=material_pk)
+    supplier = get_object_or_404(Supplier, pk=request.POST.get("supplier"))
+    price_raw = request.POST.get("purchase_price", "").strip()
+    try:
+        price = Decimal(price_raw)
+    except (InvalidOperation, ValueError):
+        messages.error(request, "Enter a valid purchase price.")
+        return redirect("material-detail", pk=material_pk)
+    if price < 0:
+        messages.error(request, "Purchase price cannot be negative.")
+        return redirect("material-detail", pk=material_pk)
+    supplier_sku = request.POST.get("supplier_sku", "").strip()
+    _, created = MaterialSupplier.objects.update_or_create(
+        material=material,
+        supplier=supplier,
+        defaults={"purchase_price": price, "supplier_sku": supplier_sku},
+    )
+    messages.success(request, "Offer added." if created else "Offer updated.")
+    return redirect("material-detail", pk=material_pk)
+
+
+@login_required
+@require_POST
+def offer_delete(request, material_pk, supplier_pk):
+    material = get_object_or_404(Material, pk=material_pk)
+    supplier = get_object_or_404(Supplier, pk=supplier_pk)
+    MaterialSupplier.objects.filter(material=material, supplier=supplier).delete()
+    messages.success(request, "Offer removed.")
+    return redirect("material-detail", pk=material_pk)

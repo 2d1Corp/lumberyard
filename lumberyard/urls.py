@@ -117,4 +117,14 @@ urlpatterns = [
         "warehouses/<int:pk>/delete/",
         views.WarehouseDeleteView.as_view(),
         name="warehouse-delete"),
+    path(
+        "materials/<int:material_pk>/offers/save/",
+        views.offer_save,
+        name="offer-save"
+    ),
+    path(
+        "materials/<int:material_pk>/offers/<int:supplier_pk>/delete/",
+        views.offer_delete,
+        name="offer-delete"
+    ),
 ]
