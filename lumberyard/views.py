@@ -178,6 +178,7 @@ def toggle_replenishment(request, pk, stock_pk):
 
 
 @login_required
+@require_POST
 def toggle_material_replenishment(request, pk):
     get_object_or_404(Material, pk=pk)
     stocks = StockBalance.objects.filter(material_id=pk)
