@@ -21,8 +21,6 @@ class Command(BaseCommand):
         categories = {
             name: Category.objects.get_or_create(name=name)[0]
             for name in (
-                "Finishing Products",
-                "Hardware",
                 "Lumber",
                 "Sheet Goods",
             )
@@ -32,7 +30,6 @@ class Command(BaseCommand):
             for name in (
                 "Baltic Panels Ltd.",
                 "Northern Timber Co.",
-                "Workshop Supply Co.",
             )
         }
         warehouses = {
@@ -137,54 +134,6 @@ class Command(BaseCommand):
                 "width_mm": 1830,
                 "length_mm": 2750,
             },
-            {
-                "sku": "SCREW-5X80",
-                "name": "Wood Screw 5x80 mm",
-                "category": "Hardware",
-                "unit": Material.Unit.PIECE,
-                "sale_price": "0.18",
-                "species": "",
-                "grade": "Zinc plated",
-                "thickness_mm": 5,
-                "width_mm": None,
-                "length_mm": 80,
-            },
-            {
-                "sku": "SANDPAPER-P120",
-                "name": "Sandpaper P120",
-                "category": "Hardware",
-                "unit": Material.Unit.PIECE,
-                "sale_price": "0.95",
-                "species": "",
-                "grade": "P120",
-                "thickness_mm": None,
-                "width_mm": 230,
-                "length_mm": 280,
-            },
-            {
-                "sku": "WOOD-GLUE-D3",
-                "name": "Wood Glue D3 1 kg",
-                "category": "Finishing Products",
-                "unit": Material.Unit.PIECE,
-                "sale_price": "8.70",
-                "species": "",
-                "grade": "D3",
-                "thickness_mm": None,
-                "width_mm": None,
-                "length_mm": None,
-            },
-            {
-                "sku": "LINSEED-OIL-1L",
-                "name": "Linseed Oil 1 L",
-                "category": "Finishing Products",
-                "unit": Material.Unit.PIECE,
-                "sale_price": "11.30",
-                "species": "",
-                "grade": "Natural",
-                "thickness_mm": None,
-                "width_mm": None,
-                "length_mm": None,
-            },
         )
 
         materials = {}
@@ -220,10 +169,6 @@ class Command(BaseCommand):
             ("OSB3-12", "North Yard", "72.000"),
             ("MDF-16", "Main Warehouse", "80.000"),
             ("CHIPBOARD-18", "North Yard", "54.000"),
-            ("SCREW-5X80", "Main Warehouse", "2500.000"),
-            ("SANDPAPER-P120", "Main Warehouse", "320.000"),
-            ("WOOD-GLUE-D3", "Main Warehouse", "48.000"),
-            ("LINSEED-OIL-1L", "North Yard", "36.000"),
         )
         for sku, warehouse_name, quantity in stock_data:
             StockBalance.objects.update_or_create(
@@ -241,10 +186,6 @@ class Command(BaseCommand):
             ("OSB3-12", "Baltic Panels Ltd.", "8.25", "BP-OSB3-12"),
             ("MDF-16", "Baltic Panels Ltd.", "10.90", "BP-MDF-16"),
             ("CHIPBOARD-18", "Baltic Panels Ltd.", "7.10", "BP-CHIP-18"),
-            ("SCREW-5X80", "Workshop Supply Co.", "0.09", "WS-SCR-5X80"),
-            ("SANDPAPER-P120", "Workshop Supply Co.", "0.52", "WS-SP-P120"),
-            ("WOOD-GLUE-D3", "Workshop Supply Co.", "5.60", "WS-GLUE-D3"),
-            ("LINSEED-OIL-1L", "Workshop Supply Co.", "7.25", "WS-OIL-1L"),
         )
         for sku, supplier_name, purchase_price, supplier_sku in offer_data:
             MaterialSupplier.objects.update_or_create(

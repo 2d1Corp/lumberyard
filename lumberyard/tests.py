@@ -22,12 +22,12 @@ class SeedDataCommandTests(TestCase):
         call_command("seed_data", stdout=output)
         call_command("seed_data", stdout=output)
 
-        self.assertEqual(Category.objects.count(), 4)
-        self.assertEqual(Supplier.objects.count(), 3)
+        self.assertEqual(Category.objects.count(), 2)
+        self.assertEqual(Supplier.objects.count(), 2)
         self.assertEqual(Warehouse.objects.count(), 2)
-        self.assertEqual(Material.objects.count(), 12)
-        self.assertEqual(StockBalance.objects.count(), 16)
-        self.assertEqual(MaterialSupplier.objects.count(), 12)
+        self.assertEqual(Material.objects.count(), 8)
+        self.assertEqual(StockBalance.objects.count(), 12)
+        self.assertEqual(MaterialSupplier.objects.count(), 8)
         self.assertTrue(Material.objects.filter(sku="OAK-BOARD-25").exists())
 
 
