@@ -33,7 +33,7 @@
         </tr>
         <tr>
           <th class="col-3">Sale price</th>
-          <td>{{ material.sale_price }}</td>
+          <td>€{{ material.sale_price }}</td>
         </tr>
         <tr>
           <th class="col-3">Species</th>
@@ -78,7 +78,7 @@
                   </div>
                 {% endif %}
               </td>
-              <td>{{ stock.quantity }}</td>
+              <td>{{ stock.quantity }} {{ material.unit }}</td>
               <td class="text-end">
                 <form method="post"
                       action="{% url 'material-toggle-replenishment' material.pk stock.pk %}">
@@ -89,7 +89,7 @@
                     </button>
                   {% else %}
                     <button type="submit" class="btn btn-sm btn-outline-secondary">
-                      <i class="bi bi-cart-plus me-1"></i> Add to purchase list
+                      <i class="bi bi-cart-plus me-1"></i> Add to replenishment list
                     </button>
                   {% endif %}
                 </form>
@@ -117,7 +117,7 @@
           {% for offer in material.supplier_offers.all %}
             <tr>
               <td>{{ offer.supplier.name }}</td>
-              <td>{{ offer.purchase_price }}</td>
+              <td>€{{ offer.purchase_price }}</td>
             </tr>
           {% empty %}
             <tr>

@@ -41,7 +41,6 @@
         <th>Material</th>
         <th>SKU</th>
         <th>Category</th>
-        <th>Unit</th>
         <th>Stock</th>
         <th>Sale price</th>
       </tr>
@@ -54,9 +53,8 @@
           </td>
           <td>{{ material.sku }}</td>
           <td>{{ material.category.name }}</td>
-          <td>{{ material.get_unit_display }}</td>
-          <td>{{ material.total_stock|default:"0" }}</td>
-          <td>{{ material.sale_price }}</td>
+          <td>{{ material.total_stock|default:"0" }} {{ material.unit }}</td>
+          <td>€{{ material.sale_price }}</td>
         </tr>
       {% empty %}
         <tr>
