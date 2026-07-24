@@ -72,6 +72,16 @@ class MaterialListViewTests(TestCase):
             ordered=False,
         )
 
+    def test_queryset_has_deterministic_ordering(self):
+        response = self.client.get(
+            reverse("material-list"),
+        )
+
+        queryset = response.context["paginator"].object_list
+
+        self.assertTrue(queryset.ordered)
+        self.assertEqual(queryset.query.order_by, ("name", "pk"))
+
 
 class ToggleReplenishmentViewTests(TestCase):
     @classmethod

@@ -54,7 +54,7 @@ class MaterialListView(LoginRequiredMixin, ListView):
             stock_balances__replenishment_requested_at__isnull=False
         )),
         stock_count=Count("stock_balances"),
-    )
+    ).order_by("name", "pk")
     paginate_by = 5
 
     def get_queryset(self):
