@@ -52,11 +52,6 @@ urlpatterns = [
         name="material-toggle-replenishment",
     ),
     path(
-        "materials/<int:pk>/toggle-replenishment/",
-        views.toggle_material_replenishment,
-        name="material-toggle-all-replenishment",
-    ),
-    path(
         "replenishment/",
         views.ReplenishmentListView.as_view(),
         name="replenishment-list",

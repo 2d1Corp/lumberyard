@@ -175,32 +175,3 @@ def toggle_replenishment(request, pk, stock_pk):
     ):
         return redirect(next_url)
     return redirect("material-detail", pk=pk)
-
-
-@login_required
-@require_POST
-def toggle_material_replenishment(request, pk):
-    get_object_or_404(Material, pk=pk)
-    stocks = StockBalance.objects.filter(material_id=pk)
-    if not stocks.exists():
-        messages.error(request, "This material has no stock to replenish.")
-        return redirect("material-detail", pk=pk)
-
-    all_requested = not stocks.filter(replenishment_requested_at__isnull=True).exists()
-    if all_requested:
-        stocks.update(
-            replenishment_requested_at=None,
-            replenishment_requested_by=None,
-        )
-        messages.success(request, "Removed all stock of this material from the list.")
-    else:
-        now = timezone.now()
-        for stock in stocks.filter(replenishment_requested_at__isnull=True):
-            stock.replenishment_requested_at = now
-            stock.replenishment_requested_by = request.user
-            stock.save(update_fields=["replenishment_requested_at", "replenishment_requested_by"])
-        messages.success(request, "Added all stock of this material to the list.")
-    return redirect("material-list")
-
-
-
