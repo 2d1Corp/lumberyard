@@ -86,7 +86,8 @@
                        value="{% if stock %}{{ stock.quantity }}{% endif %}"
                        step="any" min="0" placeholder="0"
                        class="form-control form-control-sm"
-                       style="max-width: 8rem;">
+                       style="max-width: 8rem;"
+                       aria-label="Quantity">
                 <button type="submit" class="btn btn-sm btn-outline-secondary">
                   <i class="bi bi-check-lg"></i>
                 </button>
@@ -144,11 +145,13 @@
                 <div class="input-group input-group-sm" style="max-width: 7rem;">
                   <span class="input-group-text">€</span>
                   <input type="number" name="purchase_price" value="{{ offer.purchase_price }}"
-                         step="any" min="0" class="form-control">
+                         step="any" min="0" class="form-control"
+                         aria-label="Purchase price">
                 </div>
                 <input type="text" name="supplier_sku" value="{{ offer.supplier_sku }}"
                        class="form-control form-control-sm" style="max-width: 9rem;"
-                       placeholder="Supplier SKU">
+                       placeholder="Supplier SKU"
+                       aria-label="Supplier SKU">
                 <button type="submit" class="btn btn-sm btn-outline-secondary">
                   <i class="bi bi-check-lg"></i>
                 </button>
@@ -177,7 +180,8 @@
                   action="{% url 'offer-save' material.pk %}"
                   class="d-flex flex-wrap align-items-center gap-2">
               {% csrf_token %}
-              <select name="supplier" class="form-select form-select-sm" style="max-width: 12rem;" required>
+              <select name="supplier" class="form-select form-select-sm" style="max-width: 12rem;" required
+                      aria-label="Supplier">
                 <option value="">Select supplier…</option>
                 {% for supplier in suppliers %}
                   <option value="{{ supplier.pk }}">{{ supplier.name }}</option>
@@ -186,11 +190,13 @@
               <div class="input-group input-group-sm" style="max-width: 7rem;">
                 <span class="input-group-text">€</span>
                 <input type="number" name="purchase_price" step="any" min="0"
-                       class="form-control" placeholder="Price" required>
+                       class="form-control" placeholder="Price" required
+                       aria-label="Purchase price">
               </div>
               <input type="text" name="supplier_sku"
                      class="form-control form-control-sm" style="max-width: 9rem;"
-                     placeholder="Supplier SKU">
+                     placeholder="Supplier SKU"
+                     aria-label="Supplier SKU">
               <button type="submit" class="btn btn-sm btn-primary">
                 <i class="bi bi-plus-lg me-1"></i> Add offer
               </button>
