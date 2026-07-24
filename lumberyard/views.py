@@ -128,6 +128,14 @@ class WorkerDeleteView(PermissionRequiredMixin, DeleteView):
     success_url = reverse_lazy("worker-list")
     permission_required = "lumberyard.delete_worker"
 
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(is_superuser=False)
+            .exclude(pk=self.request.user.pk)
+        )
+
 
 class ReplenishmentListView(LoginRequiredMixin, ListView):
     model = StockBalance

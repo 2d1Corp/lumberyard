@@ -34,10 +34,16 @@
             <td>{{ worker.phone_number|default:"&mdash;" }}</td>
             {% if perms.lumberyard.delete_worker %}
               <td class="text-end">
-                <a class="btn btn-sm btn-outline-danger"
-                   href="{% url 'worker-delete' worker.pk %}">
-                  <i class="bi bi-trash me-1"></i> Delete
-                </a>
+                {% if worker == request.user %}
+                  <span class="badge text-bg-secondary">Current account</span>
+                {% elif worker.is_superuser %}
+                  <span class="badge text-bg-secondary">Protected</span>
+                {% else %}
+                  <a class="btn btn-sm btn-outline-danger"
+                     href="{% url 'worker-delete' worker.pk %}">
+                    <i class="bi bi-trash me-1"></i> Delete
+                  </a>
+                {% endif %}
               </td>
             {% endif %}
           </tr>

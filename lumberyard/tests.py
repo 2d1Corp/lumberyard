@@ -141,3 +141,80 @@ class ToggleReplenishmentViewTests(TestCase):
         )
 
         self.assertEqual(response.url, next_url)
+
+
+class WorkerDeleteViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.admin = Worker.objects.create_superuser(
+            username="admin",
+            password="test-password",
+            phone_number="+10000000002",
+        )
+        cls.other_superuser = Worker.objects.create_superuser(
+            username="owner",
+            password="test-password",
+            phone_number="+10000000003",
+        )
+        cls.worker = Worker.objects.create_user(
+            username="worker-to-delete",
+            password="test-password",
+            phone_number="+10000000004",
+        )
+
+    def setUp(self):
+        self.client.force_login(self.admin)
+
+    def test_cannot_delete_own_account(self):
+        response = self.client.post(
+            reverse("worker-delete", args=[self.admin.pk]),
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(
+            Worker.objects.filter(pk=self.admin.pk).exists(),
+        )
+
+    def test_cannot_delete_superuser(self):
+        response = self.client.post(
+            reverse(
+                "worker-delete",
+                args=[self.other_superuser.pk],
+            ),
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(
+            Worker.objects.filter(
+                pk=self.other_superuser.pk,
+            ).exists(),
+        )
+
+    def test_can_delete_regular_worker(self):
+        response = self.client.post(
+            reverse("worker-delete", args=[self.worker.pk]),
+        )
+
+        self.assertRedirects(response, reverse("worker-list"))
+        self.assertFalse(
+            Worker.objects.filter(pk=self.worker.pk).exists(),
+        )
+
+    def test_worker_list_hides_protected_delete_actions(self):
+        response = self.client.get(reverse("worker-list"))
+
+        self.assertNotContains(
+            response,
+            reverse("worker-delete", args=[self.admin.pk]),
+        )
+        self.assertNotContains(
+            response,
+            reverse(
+                "worker-delete",
+                args=[self.other_superuser.pk],
+            ),
+        )
+        self.assertContains(
+            response,
+            reverse("worker-delete", args=[self.worker.pk]),
+        )
