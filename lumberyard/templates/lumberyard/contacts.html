@@ -1,0 +1,72 @@
+{% extends "lumberyard/public_base.html" %}
+
+{% block title %}Contacts | Lumberyard{% endblock %}
+
+{% block content %}
+  <section class="public-section">
+    <p class="public-hero-eyebrow mb-2">Talk to our team</p>
+    <h1 class="mb-3">Contacts</h1>
+
+    <p class="lead text-secondary mb-5">
+      Contact us about materials, availability, pickup or delivery.
+    </p>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <article class="card h-100">
+          <div class="card-body">
+            <i class="bi bi-telephone fs-2 text-success"></i>
+            <h2 class="h5 mt-3">Phone</h2>
+
+            {% for phone in public_contact.phones %}
+              <div class="{% if not forloop.last %}mb-3{% endif %}">
+                <p class="text-secondary small mb-1">
+                  {{ phone.label }}
+                </p>
+                <a
+                    href="tel:{{ phone.href }}"
+                    class="fw-semibold text-decoration-none"
+                >
+                  {{ phone.display }}
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        </article>
+      </div>
+
+      <div class="col-lg-4">
+        <article class="card h-100">
+          <div class="card-body">
+            <i class="bi bi-envelope fs-2 text-success"></i>
+            <h2 class="h5 mt-3">Email</h2>
+            <a
+                href="mailto:{{ public_contact.email }}"
+                class="fw-semibold text-decoration-none"
+            >
+              {{ public_contact.email }}
+            </a>
+            <p class="text-secondary mt-3 mb-0">
+              Send us the material name, dimensions and required amount.
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-lg-4">
+        <article class="card h-100">
+          <div class="card-body">
+            <i class="bi bi-geo-alt fs-2 text-success"></i>
+            <h2 class="h5 mt-3">Location</h2>
+            <p class="fw-semibold">
+              {{ public_contact.location }}
+            </p>
+            <p class="text-secondary mb-0">
+              Contact us before arrival to confirm pickup details.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+{% endblock %}

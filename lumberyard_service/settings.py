@@ -75,6 +75,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'lumberyard.context_processors.public_contact',
             ],
         },
     },
@@ -138,3 +139,22 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # Phone number
 PHONENUMBER_DB_FORMAT = "E164"
 PHONENUMBER_DEFAULT_FORMAT = "INTERNATIONAL"
+
+
+# Public business contact placeholders
+PUBLIC_CONTACT = {
+    "phones": (
+        {
+            "label": "Sales",
+            "display": "+420 000 000 001",
+            "href": "+420000000001",
+        },
+        {
+            "label": "Pickup",
+            "display": "+420 000 000 002",
+            "href": "+420000000002",
+        },
+    ),
+    "email": "hello@lumberyard.example",
+    "location": "Újezd u Brna, Czech Republic",
+}

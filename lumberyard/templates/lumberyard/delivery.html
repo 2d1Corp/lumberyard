@@ -1,0 +1,65 @@
+{% extends "lumberyard/public_base.html" %}
+
+{% block title %}Pickup and Delivery | Lumberyard{% endblock %}
+
+{% block content %}
+  <section class="public-section">
+    <p class="public-hero-eyebrow mb-2">Getting your materials</p>
+    <h1 class="mb-3">Pickup and delivery</h1>
+
+    <p class="lead text-secondary mb-5">
+      Collect prepared timber from {{ public_contact.location }}.
+      Contact us to discuss delivery options for your order.
+    </p>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <article class="card h-100">
+          <div class="card-body">
+            <i class="bi bi-geo-alt fs-2 text-success"></i>
+            <h2 class="h5 mt-3">Customer pickup</h2>
+            <p class="text-secondary mb-0">
+              Pick up your prepared materials in
+              {{ public_contact.location }}.
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-md-4">
+        <article class="card h-100">
+          <div class="card-body">
+            <i class="bi bi-box-seam fs-2 text-success"></i>
+            <h2 class="h5 mt-3">Prepared orders</h2>
+            <p class="text-secondary mb-0">
+              Arrange your order in advance for quicker collection.
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-md-4">
+        <article class="card h-100">
+          <div class="card-body">
+            <i class="bi bi-truck fs-2 text-success"></i>
+            <h2 class="h5 mt-3">Loading assistance</h2>
+            <p class="text-secondary mb-0">
+              High-lift forklift loading is available on site.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="mt-5">
+      <h2 class="h4">Need delivery?</h2>
+      <p class="text-secondary">
+        Contact us to discuss the destination, material volume and
+        available transport options.
+      </p>
+      <a class="btn btn-primary" href="{% url 'contacts' %}">
+        Contact us
+      </a>
+    </div>
+  </section>
+{% endblock %}

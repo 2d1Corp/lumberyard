@@ -18,6 +18,17 @@
           Materials for construction, production and woodworking,
           organized from supplier to warehouse.
         </p>
+
+        <div class="d-flex flex-wrap gap-2 mt-4">
+          <a class="btn btn-primary"
+             href="{% url 'public-material-list' %}">
+            Browse catalog
+          </a>
+          <a class="btn btn-outline-secondary"
+             href="{% url 'delivery' %}">
+            Pickup and delivery
+          </a>
+        </div>
       </div>
 
       <div class="col-lg-5">

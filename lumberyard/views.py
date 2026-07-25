@@ -16,6 +16,7 @@ from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
+    TemplateView,
     UpdateView,
     DeleteView,
 )
@@ -414,3 +415,11 @@ class PublicMaterialDetailView(DetailView):
             total_stock=Sum("stock_balances__quantity")
         )
     )
+
+
+class DeliveryView(TemplateView):
+    template_name = "lumberyard/delivery.html"
+
+
+class ContactsView(TemplateView):
+    template_name = "lumberyard/contacts.html"

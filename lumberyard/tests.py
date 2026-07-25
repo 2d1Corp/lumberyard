@@ -1,5 +1,6 @@
 from io import StringIO
 
+from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
@@ -420,3 +421,46 @@ class PublicMaterialDetailViewTests(TestCase):
         )
 
         self.assertContains(response, "Contact us")
+
+
+class PublicInformationPageTests(TestCase):
+    def test_delivery_page_is_public(self):
+        response = self.client.get(reverse("delivery"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response,
+            "lumberyard/delivery.html",
+        )
+        self.assertContains(
+            response,
+            settings.PUBLIC_CONTACT["location"],
+        )
+        self.assertContains(
+            response,
+            reverse("contacts"),
+        )
+
+    def test_contacts_page_is_public(self):
+        response = self.client.get(reverse("contacts"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response,
+            "lumberyard/contacts.html",
+        )
+        self.assertContains(
+            response,
+            settings.PUBLIC_CONTACT["email"],
+        )
+        self.assertContains(
+            response,
+            settings.PUBLIC_CONTACT["location"],
+        )
+
+        for phone in settings.PUBLIC_CONTACT["phones"]:
+            self.assertContains(response, phone["display"])
+            self.assertContains(
+                response,
+                f'tel:{phone["href"]}',
+            )

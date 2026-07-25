@@ -137,4 +137,14 @@ urlpatterns = [
         views.PublicMaterialDetailView.as_view(),
         name="public-material-detail",
     ),
+    path(
+        "delivery/",
+        views.DeliveryView.as_view(),
+        name="delivery",
+    ),
+    path(
+        "contacts/",
+        views.ContactsView.as_view(),
+        name="contacts",
+    ),
 ]
