@@ -1091,6 +1091,76 @@ a:hover {
   display: block;
 }
 
+/* Worker management */
+
+.worker-page-header {
+  padding-bottom: 0.25rem;
+}
+
+.worker-list-card {
+  box-shadow: 0 0.5rem 1.5rem rgba(20, 41, 31, 0.04);
+}
+
+.worker-list-row {
+  display: grid;
+  grid-template-columns: auto minmax(12rem, 1.25fr) minmax(10rem, 1fr) auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+}
+
+.worker-list-avatar {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background-color: #e8eee5;
+  color: var(--ly-primary);
+  font-size: 1.05rem;
+}
+
+.worker-list-identity,
+.worker-list-detail {
+  min-width: 0;
+}
+
+.worker-list-identity strong,
+.worker-list-identity small,
+.worker-list-detail small,
+.worker-list-detail span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.worker-list-identity small,
+.worker-list-detail small {
+  color: var(--ly-muted);
+  font-size: 0.72rem;
+}
+
+.worker-list-detail span {
+  font-size: 0.82rem;
+}
+
+.worker-standard-badge {
+  background-color: #e8eee5;
+  color: var(--ly-primary-dark);
+}
+
+.worker-list-action {
+  min-width: 5rem;
+  text-align: right;
+}
+
+.worker-empty-state {
+  border-style: dashed;
+}
+
 /* Internal forms and confirmations */
 
 .internal-form-page {
@@ -1255,6 +1325,24 @@ a:hover {
 
   .material-offer-form .btn {
     grid-column: 1 / -1;
+  }
+
+  .worker-list-row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .worker-list-detail {
+    grid-column: 2;
+  }
+
+  .worker-list-status {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .worker-list-action {
+    grid-column: 3;
+    grid-row: 2;
   }
 }
 
@@ -1530,6 +1618,30 @@ a:hover {
 
   .material-specifications dl {
     grid-template-columns: 1fr;
+  }
+
+  .worker-page-header .btn {
+    width: 100%;
+  }
+
+  .worker-list-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .worker-list-detail {
+    grid-column: 2;
+  }
+
+  .worker-list-status,
+  .worker-list-action {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    text-align: left;
+  }
+
+  .worker-list-action,
+  .worker-list-action .btn {
+    width: 100%;
   }
 
   .internal-form-header .btn,

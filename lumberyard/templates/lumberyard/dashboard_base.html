@@ -20,7 +20,7 @@
         </a>
 
         <a
-            class="dashboard-nav-link{% if request.resolver_match.url_name == 'material-list' or request.resolver_match.url_name == 'material-detail' %} active{% endif %}"
+            class="dashboard-nav-link{% if request.resolver_match.url_name|slice:':8' == 'material' %} active{% endif %}"
             href="{% url 'material-list' %}"
         >
           <i class="bi bi-box-seam"></i>
@@ -51,7 +51,7 @@
           <span>Replenishment</span>
         </a>
         <a
-            class="dashboard-nav-link{% if request.resolver_match.url_name == 'worker-list' or request.resolver_match.url_name == 'worker-create' %} active{% endif %}"
+            class="dashboard-nav-link{% if request.resolver_match.url_name|slice:':6' == 'worker' %} active{% endif %}"
             href="{% url 'worker-list' %}"
         >
           <i class="bi bi-people"></i>

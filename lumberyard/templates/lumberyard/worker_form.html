@@ -4,33 +4,40 @@
 {% block title %}Add worker | Lumberyard{% endblock %}
 
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-xl-7">
-      <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
-          <h1 class="h2 mb-1">Add worker</h1>
-          <p class="text-secondary mb-0">
-            Create an account for a lumberyard employee.
-          </p>
-        </div>
-
-        <a class="btn btn-sm btn-outline-secondary"
-           href="{% url 'worker-list' %}">
-          Cancel
-        </a>
+  <div class="internal-form-page material-form-page">
+    <header class="internal-form-header">
+      <div>
+        <p class="dashboard-eyebrow">Account management</p>
+        <h1 class="h2 mb-1">Add worker</h1>
+        <p class="text-secondary mb-0">
+          Create an authenticated account for a lumberyard employee.
+        </p>
       </div>
 
-      <div class="card">
-        <div class="card-body p-4">
-          <form method="post" novalidate>
-            {% csrf_token %}
-            {{ form|crispy }}
+      <a class="btn btn-outline-secondary flex-shrink-0"
+         href="{% url 'worker-list' %}">
+        <i class="bi bi-arrow-left me-1"></i>
+        Back to workers
+      </a>
+    </header>
 
+    <div class="card internal-form-card">
+      <div class="card-body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {{ form|crispy }}
+
+          <div class="internal-form-actions">
             <button type="submit" class="btn btn-primary">
+              <i class="bi bi-person-plus me-1"></i>
               Create worker
             </button>
-          </form>
-        </div>
+            <a class="btn btn-outline-secondary"
+               href="{% url 'worker-list' %}">
+              Cancel
+            </a>
+          </div>
+        </form>
       </div>
     </div>
   </div>

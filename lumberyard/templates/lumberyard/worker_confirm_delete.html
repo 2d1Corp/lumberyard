@@ -3,25 +3,49 @@
 {% block title %}Delete worker | Lumberyard{% endblock %}
 
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-xl-7">
-      <div class="card">
-        <div class="card-body p-4">
-          <h1 class="h3 mb-2">Delete worker</h1>
-          <p class="text-secondary mb-4">
-            Are you sure you want to delete worker
-            <strong>{{ object.username }}</strong>?
-            This cannot be undone.
-          </p>
+  <div class="internal-form-page">
+    <header class="internal-form-header">
+      <div>
+        <p class="dashboard-eyebrow">Account management</p>
+        <h1 class="h2 mb-1">Delete worker</h1>
+        <p class="text-secondary mb-0">
+          Review the account before confirming this action.
+        </p>
+      </div>
 
-          <form method="post">
-            {% csrf_token %}
-            <a class="btn btn-sm btn-outline-secondary" href="{% url 'worker-list' %}">
+      <a class="btn btn-outline-secondary flex-shrink-0"
+         href="{% url 'worker-list' %}">
+        <i class="bi bi-arrow-left me-1"></i>
+        Back to workers
+      </a>
+    </header>
+
+    <div class="card internal-form-card internal-danger-card">
+      <div class="card-body">
+        <div class="internal-confirm-icon" aria-hidden="true">
+          <i class="bi bi-person-x"></i>
+        </div>
+
+        <h2 class="h4 mb-2">Delete “{{ object.username }}”?</h2>
+        <p class="text-secondary mb-4">
+          This action permanently removes the worker account. Current and
+          superuser accounts are protected by the view and cannot reach this
+          confirmation through the custom UI.
+        </p>
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="internal-form-actions">
+            <button type="submit" class="btn btn-danger">
+              <i class="bi bi-person-x me-1"></i>
+              Delete worker
+            </button>
+            <a class="btn btn-outline-secondary"
+               href="{% url 'worker-list' %}">
               Cancel
             </a>
-            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
