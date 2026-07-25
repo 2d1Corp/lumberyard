@@ -633,6 +633,150 @@ a:hover {
   font-size: 1.25rem;
 }
 
+/* Internal material catalog */
+
+.material-page-header {
+  padding-bottom: 0.25rem;
+}
+
+.material-search {
+  display: flex;
+  gap: 0.65rem;
+  max-width: 40rem;
+}
+
+.material-search .input-group-text {
+  color: var(--ly-muted);
+}
+
+.material-list-card {
+  box-shadow: 0 0.5rem 1.5rem rgba(20, 41, 31, 0.04);
+}
+
+.material-list-heading,
+.material-list-row {
+  display: grid;
+  grid-template-columns:
+    minmax(15rem, 1.7fr)
+    minmax(9rem, 1fr)
+    minmax(10rem, 1fr)
+    minmax(7rem, 0.65fr)
+    auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+.material-list-heading {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--ly-border);
+  background-color: #f1eee6;
+  color: var(--ly-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.material-list-row {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--ly-border);
+  color: var(--ly-text);
+  text-decoration: none;
+  transition: background-color 150ms ease;
+}
+
+.material-list-row:last-child {
+  border-bottom: 0;
+}
+
+.material-list-row:hover {
+  background-color: #faf8f2;
+  color: var(--ly-text);
+}
+
+.material-list-product {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.material-list-image {
+  width: 4.25rem;
+  height: 3.25rem;
+  flex: 0 0 auto;
+  border: 1px solid var(--ly-border);
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.material-list-product strong,
+.material-list-product small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.material-list-product strong {
+  font-size: 0.88rem;
+}
+
+.material-list-product small,
+.material-list-cell small {
+  color: var(--ly-muted);
+  font-size: 0.72rem;
+}
+
+.material-list-cell > small {
+  display: none;
+}
+
+.material-list-cell > span {
+  display: block;
+  font-size: 0.82rem;
+}
+
+.material-list-price {
+  font-weight: 700;
+}
+
+.material-replenishment-badge {
+  width: fit-content;
+  margin-top: 0.25rem;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  background-color: #f5eadb;
+  color: #8c5d28;
+  font-size: 0.68rem !important;
+  font-weight: 700;
+}
+
+.material-list-arrow {
+  color: #a2a69f;
+  font-size: 0.75rem;
+}
+
+.material-empty-state {
+  border-style: dashed;
+}
+
+.material-empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.6rem;
+  background-color: #e8eee5;
+  color: var(--ly-primary);
+  font-size: 1.25rem;
+}
+
+.material-form-page {
+  max-width: 58rem;
+}
+
 /* Internal forms and confirmations */
 
 .internal-form-page {
@@ -723,6 +867,22 @@ a:hover {
 
   .replenishment-action {
     align-self: end;
+  }
+
+  .material-list-heading {
+    display: none;
+  }
+
+  .material-list-row {
+    grid-template-columns: minmax(0, 1.5fr) minmax(8rem, 1fr) auto;
+  }
+
+  .material-list-product {
+    grid-row: 1 / 3;
+  }
+
+  .material-list-cell > small {
+    display: block;
   }
 }
 
@@ -861,6 +1021,10 @@ a:hover {
     width: 100%;
   }
 
+  .material-page-header .btn {
+    width: 100%;
+  }
+
   .category-list-image {
     width: 4rem;
     height: 3.25rem;
@@ -898,6 +1062,23 @@ a:hover {
   .replenishment-action,
   .replenishment-action .btn {
     width: 100%;
+  }
+
+  .material-search {
+    flex-direction: column;
+    max-width: none;
+  }
+
+  .material-list-row {
+    grid-template-columns: 1fr;
+  }
+
+  .material-list-product {
+    grid-row: auto;
+  }
+
+  .material-list-arrow {
+    display: none;
   }
 
   .internal-form-header .btn,

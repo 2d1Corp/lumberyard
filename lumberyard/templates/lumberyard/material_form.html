@@ -1,47 +1,66 @@
 {% extends "lumberyard/dashboard_base.html" %}
-{% load crispy_forms_filters %}
 {% load crispy_forms_tags %}
 
-{% block title %}{% if view.object %}Edit material{% else %}Add material{% endif %} | Lumberyard{% endblock %}
-{% block content %}
-  <div class="row justify-content-center">
-    <div class="col-xl-7">
-      <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
-          <h1 class="h2 mb-1">
-            {% if view.object %}Edit material{% else %}Add material{% endif %}
-          </h1>
-          <p class="text-secondary mb-0">
-            {% if view.object %}
-              Update the product details.
-            {% else %}
-              Add a new product to the catalog.
-            {% endif %}
-          </p>
-        </div>
+{% block title %}
+  {% if view.object %}Edit material{% else %}Add material{% endif %} | Lumberyard
+{% endblock %}
 
-        {% if view.object %}
-          <a class="btn btn-sm btn-outline-secondary" href="{% url 'material-detail' view.object.pk %}">
-            Cancel
-          </a>
-        {% else %}
-          <a class="btn btn-sm btn-outline-secondary" href="{% url 'material-list' %}">
-            Cancel
-          </a>
-        {% endif %}
+{% block content %}
+  <div class="internal-form-page material-form-page">
+    <header class="internal-form-header">
+      <div>
+        <p class="dashboard-eyebrow">Inventory catalog</p>
+        <h1 class="h2 mb-1">
+          {% if view.object %}Edit material{% else %}Add material{% endif %}
+        </h1>
+        <p class="text-secondary mb-0">
+          {% if view.object %}
+            Update the catalog definition and product specifications.
+          {% else %}
+            Create a catalog item before adding stock and supplier offers.
+          {% endif %}
+        </p>
       </div>
 
-      <div class="card">
-        <div class="card-body p-4">
-          <form method="post" novalidate>
-            {% csrf_token %}
-            {{ form|crispy }}
+      {% if view.object %}
+        <a class="btn btn-outline-secondary flex-shrink-0"
+           href="{% url 'material-detail' view.object.pk %}">
+          <i class="bi bi-arrow-left me-1"></i>
+          Back to material
+        </a>
+      {% else %}
+        <a class="btn btn-outline-secondary flex-shrink-0"
+           href="{% url 'material-list' %}">
+          <i class="bi bi-arrow-left me-1"></i>
+          Back to materials
+        </a>
+      {% endif %}
+    </header>
 
-            <button type="submit" class="btn btn-sm btn-primary">
-              {% if view.object %}Save changes{% else %}Add product{% endif %}
+    <div class="card internal-form-card">
+      <div class="card-body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {{ form|crispy }}
+
+          <div class="internal-form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg me-1"></i>
+              {% if view.object %}Save changes{% else %}Add material{% endif %}
             </button>
-          </form>
-        </div>
+            {% if view.object %}
+              <a class="btn btn-outline-secondary"
+                 href="{% url 'material-detail' view.object.pk %}">
+                Cancel
+              </a>
+            {% else %}
+              <a class="btn btn-outline-secondary"
+                 href="{% url 'material-list' %}">
+                Cancel
+              </a>
+            {% endif %}
+          </div>
+        </form>
       </div>
     </div>
   </div>

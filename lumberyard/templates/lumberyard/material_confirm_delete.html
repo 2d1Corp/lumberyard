@@ -3,24 +3,48 @@
 {% block title %}Delete material | Lumberyard{% endblock %}
 
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-xl-7">
-      <div class="card">
-        <div class="card-body p-4">
-          <h1 class="h3 mb-2">Delete material</h1>
-          <p class="text-secondary mb-4">
-            Are you sure you want to delete <strong>{{ object }}</strong>?
-            This cannot be undone.
-          </p>
+  <div class="internal-form-page">
+    <header class="internal-form-header">
+      <div>
+        <p class="dashboard-eyebrow">Inventory catalog</p>
+        <h1 class="h2 mb-1">Delete material</h1>
+        <p class="text-secondary mb-0">
+          Review the material before confirming this action.
+        </p>
+      </div>
 
-          <form method="post">
-            {% csrf_token %}
-            <a class="btn btn-sm btn-outline-secondary" href="{% url 'material-detail' object.pk %}">
+      <a class="btn btn-outline-secondary flex-shrink-0"
+         href="{% url 'material-detail' object.pk %}">
+        <i class="bi bi-arrow-left me-1"></i>
+        Back to material
+      </a>
+    </header>
+
+    <div class="card internal-form-card internal-danger-card">
+      <div class="card-body">
+        <div class="internal-confirm-icon" aria-hidden="true">
+          <i class="bi bi-trash"></i>
+        </div>
+
+        <h2 class="h4 mb-2">Delete “{{ object.name }}”?</h2>
+        <p class="text-secondary mb-4">
+          This action cannot be undone. A material that still has stock
+          balances or supplier offers cannot be deleted.
+        </p>
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="internal-form-actions">
+            <button type="submit" class="btn btn-danger">
+              <i class="bi bi-trash me-1"></i>
+              Delete material
+            </button>
+            <a class="btn btn-outline-secondary"
+               href="{% url 'material-detail' object.pk %}">
               Cancel
             </a>
-            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
