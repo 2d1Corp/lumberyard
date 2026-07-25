@@ -1,210 +1,320 @@
 {% extends "lumberyard/dashboard_base.html" %}
+{% load static lumberyard_extras %}
 
 {% block title %}{{ material.name }} | Lumberyard{% endblock %}
 
 {% block content %}
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0">{{ material.name }}</h1>
-    <div class="d-flex gap-2">
-      <a class="btn btn-sm btn-outline-secondary" href="{% url 'material-update' material.pk %}">
-        <i class="bi bi-pencil me-1"></i> Edit
+  <header class="material-detail-header">
+    <div>
+      <a class="material-back-link" href="{% url 'material-list' %}">
+        <i class="bi bi-arrow-left"></i>
+        Materials
       </a>
-      <a class="btn btn-sm btn-outline-danger" href="{% url 'material-delete' material.pk %}">
-        <i class="bi bi-trash me-1"></i> Delete
+      <p class="dashboard-eyebrow">Material workspace</p>
+      <h1>{{ material.name }}</h1>
+      <p>{{ material.sku }} · {{ material.category.name }}</p>
+    </div>
+
+    <div class="material-detail-actions">
+      <a class="btn btn-outline-secondary"
+         href="{% url 'material-update' material.pk %}">
+        <i class="bi bi-pencil me-1"></i>
+        Edit
+      </a>
+      <a class="btn btn-outline-danger"
+         href="{% url 'material-delete' material.pk %}">
+        <i class="bi bi-trash me-1"></i>
+        Delete
       </a>
     </div>
-  </div>
+  </header>
 
-  <div class="row">
-    <div class="col-lg-7">
-      <h2 class="h5 mb-3">Details</h2>
-      <table class="table table-hover align-middle mb-4">
-        <tr>
-          <th class="col-3">SKU</th>
-          <td>{{ material.sku }}</td>
-        </tr>
-        <tr>
-          <th class="col-3">Category</th>
-          <td>{{ material.category.name }}</td>
-        </tr>
-        <tr>
-          <th class="col-3">Unit</th>
-          <td>{{ material.get_unit_display }}</td>
-        </tr>
-        <tr>
-          <th class="col-3">Sale price</th>
-          <td>€{{ material.sale_price }}</td>
-        </tr>
-        <tr>
-          <th class="col-3">Species</th>
-          <td>{{ material.species }}</td>
-        </tr>
-        <tr>
-          <th class="col-3">Grade</th>
-          <td>{{ material.grade }}</td>
-        </tr>
-        <tr>
-          <th class="col-3">Thickness</th>
-          <td>{{ material.thickness_mm|default:"-" }}</td>
-        </tr>
-        <tr>
-          <th class="col-3">Width</th>
-          <td>{{ material.width_mm|default:"-" }}</td>
-        </tr>
-        <tr>
-          <th class="col-3">Length</th>
-          <td>{{ material.length_mm|default:"-" }}</td>
-        </tr>
-      </table>
-      <h2 class="h5 mb-3">Stock</h2>
-      <table class="table table-hover align-middle mb-4">
-        <thead class="table-light">
-        <tr>
-          <th class="col-3">Warehouse</th>
-          <th>Quantity</th>
-          <th class="text-end">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
+  <section class="card material-overview-card">
+    <img
+        src="{% static material|material_image %}"
+        alt="{{ material.name }}"
+        class="material-overview-image"
+    >
+
+    <div class="material-overview-content">
+      <div class="material-overview-primary">
+        <p class="dashboard-eyebrow">Catalog definition</p>
+        <h2>{{ material.name }}</h2>
+        <p class="material-description">
+          {{ material.description|default:"No product description provided." }}
+        </p>
+      </div>
+
+      <dl class="material-overview-facts">
+        <div><dt>Sale price</dt><dd>€{{ material.sale_price }}</dd></div>
+        <div><dt>Unit</dt><dd>{{ material.get_unit_display }}</dd></div>
+        <div><dt>Category</dt><dd>{{ material.category.name }}</dd></div>
+        <div><dt>SKU</dt><dd>{{ material.sku }}</dd></div>
+      </dl>
+
+      <div class="material-specifications">
+        <h3>Specifications</h3>
+        <dl>
+          <div>
+            <dt>Species</dt>
+            <dd>{{ material.species|default:"Not specified" }}</dd>
+          </div>
+          <div>
+            <dt>Grade</dt>
+            <dd>{{ material.grade|default:"Not specified" }}</dd>
+          </div>
+          <div>
+            <dt>Thickness</dt>
+            <dd>{% if material.thickness_mm %}{{ material.thickness_mm }} mm{% else %}Not specified{% endif %}</dd>
+          </div>
+          <div>
+            <dt>Width</dt>
+            <dd>{% if material.width_mm %}{{ material.width_mm }} mm{% else %}Not specified{% endif %}</dd>
+          </div>
+          <div>
+            <dt>Length</dt>
+            <dd>{% if material.length_mm %}{{ material.length_mm }} mm{% else %}Not specified{% endif %}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="card material-workspace-card">
+    <div class="material-section-heading">
+      <div>
+        <p class="dashboard-eyebrow">Warehouse balances</p>
+        <h2>Stock</h2>
+        <p>
+          Enter a positive quantity to create or update stock. Enter zero to
+          clear the balance.
+        </p>
+      </div>
+      <span class="material-section-icon" aria-hidden="true">
+        <i class="bi bi-building"></i>
+      </span>
+    </div>
+
+    {% if stock_rows %}
+      <div class="material-stock-list">
         {% for warehouse, stock in stock_rows %}
-          <tr>
-            <td>
-              {{ warehouse.name }}
-              {% if stock.replenishment_requested_at %}
-                <div class="small text-warning-emphasis mt-1">
-                  Requested by {{ stock.replenishment_requested_by|default:"&mdash;" }}
-                  on {{ stock.replenishment_requested_at|date:"Y-m-d H:i" }}
-                </div>
-              {% endif %}
-            </td>
-            <td>
-              <form method="post"
-                    action="{% url 'stockbalance-update' material.pk warehouse.pk %}"
-                    class="d-inline-flex align-items-center gap-2">
-                {% csrf_token %}
-                <input type="number" name="quantity"
-                       value="{% if stock %}{{ stock.quantity }}{% endif %}"
-                       step="any" min="0" placeholder="0"
-                       class="form-control form-control-sm"
-                       style="max-width: 8rem;"
-                       aria-label="Quantity">
-                <button type="submit" class="btn btn-sm btn-outline-secondary">
-                  <i class="bi bi-check-lg"></i>
-                </button>
-              </form>
-            </td>
-            <td class="text-end">
+          <article class="material-stock-row">
+            <div class="material-stock-location">
+              <strong>{{ warehouse.name }}</strong>
               {% if stock %}
-                <form method="post"
-                      action="{% url 'material-toggle-replenishment' material.pk stock.pk %}">
-                  {% csrf_token %}
-                  {% if stock.replenishment_requested_at %}
-                    <button type="submit" class="btn btn-sm btn-outline-warning">
-                      <i class="bi bi-x-circle me-1"></i> Remove from list
-                    </button>
-                  {% else %}
-                    <button type="submit" class="btn btn-sm btn-outline-secondary">
-                      <i class="bi bi-cart-plus me-1"></i> Add to replenishment list
-                    </button>
-                  {% endif %}
-                </form>
+                <small>Recorded balance · {{ material.get_unit_display }}</small>
               {% else %}
-                <span class="text-muted">—</span>
+                <small>No stock balance recorded</small>
               {% endif %}
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="3" class="text-center text-muted py-3">
-              No warehouses configured.
-            </td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
+            </div>
 
-      <h2 class="h5 mb-3">Suppliers</h2>
-      <table class="table table-hover align-middle mb-4">
-        <thead class="table-light">
-        <tr>
-          <th class="col-3">Supplier</th>
-          <th>Purchase price &amp; SKU</th>
-          <th class="text-end">Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for offer in material.supplier_offers.all %}
-          <tr>
-            <td class="fw-semibold">{{ offer.supplier.name }}</td>
-            <td>
-              <form method="post"
-                    action="{% url 'offer-save' material.pk %}"
-                    class="d-inline-flex align-items-center gap-2">
-                {% csrf_token %}
-                <input type="hidden" name="supplier" value="{{ offer.supplier.pk }}">
-                <div class="input-group input-group-sm" style="max-width: 7rem;">
-                  <span class="input-group-text">€</span>
-                  <input type="number" name="purchase_price" value="{{ offer.purchase_price }}"
-                         step="any" min="0" class="form-control"
-                         aria-label="Purchase price">
-                </div>
-                <input type="text" name="supplier_sku" value="{{ offer.supplier_sku }}"
-                       class="form-control form-control-sm" style="max-width: 9rem;"
-                       placeholder="Supplier SKU"
-                       aria-label="Supplier SKU">
-                <button type="submit" class="btn btn-sm btn-outline-secondary">
-                  <i class="bi bi-check-lg"></i>
-                </button>
-              </form>
-            </td>
-            <td class="text-end">
-              <form method="post"
-                    action="{% url 'offer-delete' material.pk offer.supplier.pk %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-outline-danger">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </form>
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="3" class="text-center text-muted py-3">
-              No supplier offers yet.
-            </td>
-          </tr>
-        {% endfor %}
-        <tr>
-          <td colspan="3">
-            <form method="post"
-                  action="{% url 'offer-save' material.pk %}"
-                  class="d-flex flex-wrap align-items-center gap-2">
+            <form
+                method="post"
+                action="{% url 'stockbalance-update' material.pk warehouse.pk %}"
+                class="material-stock-form"
+            >
               {% csrf_token %}
-              <select name="supplier" class="form-select form-select-sm" style="max-width: 12rem;" required
-                      aria-label="Supplier">
-                <option value="">Select supplier…</option>
-                {% for supplier in suppliers %}
-                  <option value="{{ supplier.pk }}">{{ supplier.name }}</option>
-                {% endfor %}
-              </select>
-              <div class="input-group input-group-sm" style="max-width: 7rem;">
-                <span class="input-group-text">€</span>
-                <input type="number" name="purchase_price" step="any" min="0"
-                       class="form-control" placeholder="Price" required
-                       aria-label="Purchase price">
+              <label for="quantity-{{ warehouse.pk }}">Quantity</label>
+              <div class="input-group input-group-sm">
+                <input
+                    id="quantity-{{ warehouse.pk }}"
+                    type="number"
+                    name="quantity"
+                    value="{% if stock %}{{ stock.quantity }}{% endif %}"
+                    step="any"
+                    min="0"
+                    placeholder="0"
+                    class="form-control"
+                >
+                <span class="input-group-text">{{ material.unit }}</span>
+                <button type="submit" class="btn btn-outline-secondary">
+                  Save
+                </button>
               </div>
-              <input type="text" name="supplier_sku"
-                     class="form-control form-control-sm" style="max-width: 9rem;"
-                     placeholder="Supplier SKU"
-                     aria-label="Supplier SKU">
-              <button type="submit" class="btn btn-sm btn-primary">
-                <i class="bi bi-plus-lg me-1"></i> Add offer
-              </button>
             </form>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+
+            <div class="material-replenishment-action">
+              {% if stock %}
+                {% if stock.replenishment_requested_at %}
+                  <div class="material-request-status">
+                    <span>
+                      <i class="bi bi-exclamation-circle me-1"></i>
+                      Replenishment requested
+                    </span>
+                    <small>
+                      {{ stock.replenishment_requested_by.username|default:"Unknown worker" }}
+                      · {{ stock.replenishment_requested_at|date:"M j, Y, H:i" }}
+                    </small>
+                  </div>
+                  <form method="post"
+                        action="{% url 'material-toggle-replenishment' material.pk stock.pk %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-secondary">
+                      <i class="bi bi-check2 me-1"></i>
+                      Clear request
+                    </button>
+                  </form>
+                {% else %}
+                  <form method="post"
+                        action="{% url 'material-toggle-replenishment' material.pk stock.pk %}">
+                    {% csrf_token %}
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-secondary">
+                      <i class="bi bi-cart-plus me-1"></i>
+                      Request replenishment
+                    </button>
+                  </form>
+                {% endif %}
+              {% else %}
+                <span class="material-no-action">
+                  Add stock before requesting replenishment
+                </span>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="material-section-empty">
+        <i class="bi bi-building"></i>
+        <p>No warehouses configured.</p>
+        <a href="{% url 'warehouse-create' %}">Add a warehouse</a>
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="card material-workspace-card">
+    <div class="material-section-heading">
+      <div>
+        <p class="dashboard-eyebrow">Internal purchasing data</p>
+        <h2>Supplier offers</h2>
+        <p>
+          Maintain the supplier-specific purchase price and SKU for this
+          material.
+        </p>
+      </div>
+      <span class="material-section-icon material-section-icon-accent"
+            aria-hidden="true">
+        <i class="bi bi-truck"></i>
+      </span>
     </div>
-  </div>
+
+    <div class="material-offer-list">
+      {% for offer in material.supplier_offers.all %}
+        <article class="material-offer-row">
+          <div class="material-offer-supplier">
+            <strong>{{ offer.supplier.name }}</strong>
+            <small>Existing supplier offer</small>
+          </div>
+
+          <form method="post"
+                action="{% url 'offer-save' material.pk %}"
+                class="material-offer-form">
+            {% csrf_token %}
+            <input type="hidden"
+                   name="supplier"
+                   value="{{ offer.supplier.pk }}">
+
+            <div>
+              <label for="price-{{ offer.pk }}">Purchase price</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text">€</span>
+                <input id="price-{{ offer.pk }}"
+                       type="number"
+                       name="purchase_price"
+                       value="{{ offer.purchase_price }}"
+                       step="any"
+                       min="0"
+                       class="form-control">
+              </div>
+            </div>
+
+            <div>
+              <label for="supplier-sku-{{ offer.pk }}">Supplier SKU</label>
+              <input id="supplier-sku-{{ offer.pk }}"
+                     type="text"
+                     name="supplier_sku"
+                     value="{{ offer.supplier_sku }}"
+                     class="form-control form-control-sm"
+                     placeholder="Optional">
+            </div>
+
+            <button type="submit" class="btn btn-sm btn-outline-secondary">
+              Save
+            </button>
+          </form>
+
+          <form method="post"
+                action="{% url 'offer-delete' material.pk offer.supplier.pk %}"
+                class="material-offer-delete">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-sm btn-outline-danger"
+                    aria-label="Delete offer from {{ offer.supplier.name }}">
+              <i class="bi bi-trash"></i>
+            </button>
+          </form>
+        </article>
+      {% empty %}
+        <div class="material-section-empty material-offers-empty">
+          <i class="bi bi-truck"></i>
+          <p>No supplier offers yet.</p>
+          <span>Add the first offer below.</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <form method="post"
+          action="{% url 'offer-save' material.pk %}"
+          class="material-new-offer">
+      {% csrf_token %}
+      <div class="material-new-offer-heading">
+        <strong>Add supplier offer</strong>
+        <small>Choose a supplier and enter its purchase terms.</small>
+      </div>
+
+      <div>
+        <label for="new-offer-supplier">Supplier</label>
+        <select id="new-offer-supplier"
+                name="supplier"
+                class="form-select form-select-sm"
+                required>
+          <option value="">Select supplier…</option>
+          {% for supplier in suppliers %}
+            <option value="{{ supplier.pk }}">{{ supplier.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label for="new-offer-price">Purchase price</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text">€</span>
+          <input id="new-offer-price"
+                 type="number"
+                 name="purchase_price"
+                 step="any"
+                 min="0"
+                 class="form-control"
+                 placeholder="0.00"
+                 required>
+        </div>
+      </div>
+
+      <div>
+        <label for="new-offer-sku">Supplier SKU</label>
+        <input id="new-offer-sku"
+               type="text"
+               name="supplier_sku"
+               class="form-control form-control-sm"
+               placeholder="Optional">
+      </div>
+
+      <button type="submit" class="btn btn-sm btn-primary">
+        <i class="bi bi-plus-lg me-1"></i>
+        Add offer
+      </button>
+    </form>
+  </section>
 {% endblock %}
