@@ -1,2 +1,159 @@
-# lumberyard
-A web application for managing lumber inventory, including materials, categories, suppliers, and warehouses. Built with Django.
+# Lumberyard
+
+Lumberyard is my first Django learning project. It is a small web application
+for a timber business with two parts:
+
+- a public website with a read-only material catalog;
+- an internal workspace for workers to manage inventory information.
+
+The project was created as part of my Python and Django studies.
+
+## Features
+
+### Public pages
+
+- Home page
+- Material catalog
+- Search by material name or SKU
+- Filter by category
+- Material details and availability status
+- Delivery and contact information
+
+The public catalog does not show exact stock quantities, warehouse details,
+suppliers, or purchase prices.
+
+### Internal workspace
+
+Authenticated workers can:
+
+- view a dashboard with current project data;
+- create, update, search, and delete materials;
+- manage categories, warehouses, and suppliers;
+- update material quantities for each warehouse;
+- manage supplier offers and purchase prices;
+- create and clear manual replenishment requests;
+- manage worker accounts when they have the required permissions.
+
+## Technologies
+
+- Python
+- Django 6
+- SQLite
+- Bootstrap 5
+- django-crispy-forms
+- django-phonenumber-field
+
+## Data model
+
+The project uses seven main models:
+
+- `Worker` — a custom Django user for employees;
+- `Category` — a group of materials;
+- `Material` — catalog and product information;
+- `Warehouse` — a stock location;
+- `StockBalance` — the quantity of a material in one warehouse;
+- `Supplier` — supplier information;
+- `MaterialSupplier` — a supplier offer for a material.
+
+## Local setup
+
+Python 3.12 or newer is recommended.
+
+1. Clone the repository and open the project directory:
+
+   ```bash
+   git clone <repository-url>
+   cd lumberyard
+   ```
+
+2. Create a virtual environment:
+
+   ```bash
+   python -m venv venv
+   ```
+
+3. Activate it.
+
+   On Windows:
+
+   ```bash
+   venv\Scripts\activate
+   ```
+
+   On macOS or Linux:
+
+   ```bash
+   source venv/bin/activate
+   ```
+
+4. Install the dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+5. Apply the database migrations:
+
+   ```bash
+   python manage.py migrate
+   ```
+
+6. Load the demo catalog and inventory data:
+
+   ```bash
+   python manage.py seed_data
+   ```
+
+7. Create a user for the internal workspace:
+
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+8. Start the development server:
+
+   ```bash
+   python manage.py runserver
+   ```
+
+Open `http://127.0.0.1:8000/` in a browser. The internal workspace is available
+after signing in at `http://127.0.0.1:8000/login/`.
+
+## Demo data
+
+The `seed_data` command is safe to run more than once. It creates a small demo
+dataset with:
+
+- 2 material categories;
+- 8 timber and sheet materials;
+- 2 warehouses;
+- 2 suppliers;
+- stock balances and supplier offers.
+
+The command does not create a worker account.
+
+## Main workflows
+
+### Public visitor
+
+1. Open the home page.
+2. Browse or search the catalog.
+3. Open a material page.
+4. Check its general availability and use the delivery or contact information.
+
+### Worker
+
+1. Sign in and open the dashboard.
+2. Find or create a material.
+3. Update its warehouse stock and supplier offers.
+4. Create a replenishment request for a specific warehouse when needed.
+
+## Project scope
+
+This is a learning project, not a production inventory system. It demonstrates
+basic Django models, forms, views, authentication, permissions, templates, and
+tests.
+
+Lumberyard is not an online shop, accounting system, CRM, or full warehouse
+management system. It does not include customer accounts, orders, payments, or
+automatic purchasing.
