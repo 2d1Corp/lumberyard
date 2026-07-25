@@ -1,53 +1,108 @@
 {% extends "lumberyard/dashboard_base.html" %}
 
-{% block title %}Replenishment list | Lumberyard{% endblock %}
+{% block title %}Replenishment | Lumberyard{% endblock %}
 
 {% block content %}
-  <h1 class="mb-4">Replenishment list</h1>
+  <header
+      class="replenishment-page-header d-flex flex-column flex-sm-row
+             align-items-sm-start justify-content-between gap-3 mb-4"
+  >
+    <div>
+      <p class="dashboard-eyebrow">Inventory action</p>
+      <h1 class="h2 mb-1">Replenishment</h1>
+      <p class="text-secondary mb-0">
+        Review stock balances manually requested for restocking.
+      </p>
+    </div>
 
-  <div class="table-responsive">
-    <table class="table table-hover align-middle">
-      <thead class="table-light">
-        <tr>
-          <th>Material</th>
-          <th>Warehouse</th>
-          <th>Quantity</th>
-          <th>Requested by</th>
-          <th>Requested at</th>
-          <th class="text-end">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for stock in stockbalance_list %}
-          <tr>
-            <td class="fw-semibold">
-              <a href="{% url 'material-detail' stock.material_id %}">
+    <a class="btn btn-outline-secondary flex-shrink-0"
+       href="{% url 'material-list' %}">
+      <i class="bi bi-box-seam me-1"></i>
+      Browse materials
+    </a>
+  </header>
+
+  {% if stockbalance_list %}
+    <div class="card replenishment-list-card overflow-hidden">
+      <div class="replenishment-list-heading" aria-hidden="true">
+        <span>Material</span>
+        <span>Warehouse</span>
+        <span>Current stock</span>
+        <span>Request details</span>
+        <span class="text-end">Action</span>
+      </div>
+
+      {% for stock in stockbalance_list %}
+        <article class="replenishment-list-row">
+          <div class="replenishment-material">
+            <span class="replenishment-status-icon" aria-hidden="true">
+              <i class="bi bi-exclamation-lg"></i>
+            </span>
+            <div class="min-w-0">
+              <a class="replenishment-material-link"
+                 href="{% url 'material-detail' stock.material_id %}">
                 {{ stock.material.name }}
               </a>
-            </td>
-            <td>{{ stock.warehouse.name }}</td>
-            <td>{{ stock.quantity }}</td>
-            <td>{{ stock.replenishment_requested_by|default:"&mdash;" }}</td>
-            <td>{{ stock.replenishment_requested_at|date:"Y-m-d H:i" }}</td>
-            <td class="text-end">
-              <form method="post"
-                    action="{% url 'material-toggle-replenishment' stock.material_id stock.pk %}">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{% url 'replenishment-list' %}">
-                <button type="submit" class="btn btn-sm btn-outline-warning">
-                  <i class="bi bi-x-circle me-1"></i> Remove
-                </button>
-              </form>
-            </td>
-          </tr>
-        {% empty %}
-          <tr>
-            <td colspan="6" class="text-center text-muted py-4">
-              No items awaiting replenishment.
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+              <small>{{ stock.material.sku }}</small>
+            </div>
+          </div>
+
+          <div class="replenishment-cell">
+            <small>Warehouse</small>
+            <span>{{ stock.warehouse.name }}</span>
+          </div>
+
+          <div class="replenishment-cell">
+            <small>Current stock</small>
+            <span>
+              {{ stock.quantity }}
+              {{ stock.material.get_unit_display }}
+            </span>
+          </div>
+
+          <div class="replenishment-cell">
+            <small>Request details</small>
+            <span>
+              {{ stock.replenishment_requested_by.username|default:"Unknown worker" }}
+            </span>
+            <time datetime="{{ stock.replenishment_requested_at|date:'c' }}">
+              {{ stock.replenishment_requested_at|date:"M j, Y, H:i" }}
+            </time>
+          </div>
+
+          <form
+              class="replenishment-action"
+              method="post"
+              action="{% url 'material-toggle-replenishment' stock.material_id stock.pk %}"
+          >
+            {% csrf_token %}
+            <input type="hidden"
+                   name="next"
+                   value="{% url 'replenishment-list' %}">
+            <button type="submit" class="btn btn-sm btn-outline-secondary">
+              <i class="bi bi-check2 me-1"></i>
+              Clear request
+            </button>
+          </form>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card replenishment-empty-state">
+      <div class="card-body py-5 text-center">
+        <div class="replenishment-empty-icon mx-auto mb-3"
+             aria-hidden="true">
+          <i class="bi bi-check2-circle"></i>
+        </div>
+        <h2 class="h5 mb-2">No active replenishment requests</h2>
+        <p class="text-secondary mb-3">
+          The shared request list is currently clear.
+        </p>
+        <a class="btn btn-primary" href="{% url 'material-list' %}">
+          <i class="bi bi-box-seam me-1"></i>
+          Browse materials
+        </a>
+      </div>
+    </div>
+  {% endif %}
 {% endblock %}
