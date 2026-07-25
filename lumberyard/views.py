@@ -320,6 +320,9 @@ class CategoryDeleteView(LoginRequiredMixin, DeleteView):
 
 class WarehouseListView(LoginRequiredMixin, ListView):
     model = Warehouse
+    queryset = Warehouse.objects.annotate(
+        stock_balance_count=Count("stock_balances"),
+    ).order_by("name", "pk")
 
 
 class WarehouseCreateView(LoginRequiredMixin, CreateView):
