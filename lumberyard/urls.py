@@ -127,4 +127,9 @@ urlpatterns = [
         views.offer_delete,
         name="offer-delete"
     ),
+    path(
+        "catalog/",
+        views.PublicMaterialListView.as_view(),
+        name="public-material-list",
+    )
 ]

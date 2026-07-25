@@ -228,3 +228,103 @@ class WorkerDeleteViewTests(TestCase):
             response,
             reverse("worker-delete", args=[self.worker.pk]),
         )
+
+
+class PublicMaterialListViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        category = Category.objects.create(name="Test Boards")
+
+        cls.material = Material.objects.create(
+            name="Public Oak Board",
+            sku="PUBLIC-OAK-001",
+            category=category,
+            sale_price="25.00",
+        )
+
+        warehouse = Warehouse.objects.create(
+            name="Private Test Warehouse",
+        )
+        StockBalance.objects.create(
+            material=cls.material,
+            warehouse=warehouse,
+            quantity="137.125",
+        )
+
+        supplier = Supplier.objects.create(
+            name="Private Test Supplier",
+        )
+        MaterialSupplier.objects.create(
+            material=cls.material,
+            supplier=supplier,
+            purchase_price="8.99",
+            supplier_sku="PRIVATE-SKU-777",
+        )
+
+    def test_catalog_is_available_to_anonymous_users(self):
+        response = self.client.get(reverse("public-material-list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response,
+            "lumberyard/public_material_list.html",
+        )
+
+    def test_catalog_hides_internal_data(self):
+        response = self.client.get(
+            reverse("public-material-list")
+        )
+
+        self.assertContains(response, self.material.name)
+        self.assertContains(response, "Available")
+
+        self.assertNotContains(response, "137.125")
+        self.assertNotContains(
+            response,
+            "Private Test Warehouse",
+        )
+        self.assertNotContains(
+            response,
+            "Private Test Supplier"
+        )
+        self.assertNotContains(response, "PRIVATE-SKU-777")
+        self.assertNotContains(response, "8.99")
+
+    def test_search_matches_name_or_sku(self):
+        sku_match = Material.objects.create(
+            name="Pine Beam",
+            sku="OAK-SKU-002",
+            category=self.material.category,
+        )
+        non_match = Material.objects.create(
+            name="Birch Plywood",
+            sku="PLYWOOD-003",
+            category=self.material.category,
+        )
+
+        response = self.client.get(
+            reverse("public-material-list"),
+            {"query": "OAK"},
+        )
+
+        self.assertContains(response, self.material.name)
+        self.assertContains(response, sku_match.name)
+        self.assertNotContains(response, non_match.name)
+
+    def test_category_filter_shows_only_selected_category(self):
+        other_category = Category.objects.create(
+            name="Test Beams",
+        )
+        other_material = Material.objects.create(
+            name="Filtered Pine Beam",
+            sku="FILTERED-PINE-001",
+            category=other_category,
+        )
+
+        response = self.client.get(
+            reverse("public-material-list"),
+            {"category": self.material.category_id},
+        )
+
+        self.assertContains(response, self.material.name)
+        self.assertNotContains(response, other_material.name)

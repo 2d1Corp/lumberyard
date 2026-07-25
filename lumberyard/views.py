@@ -364,3 +364,39 @@ def offer_delete(request, material_pk, supplier_pk):
     MaterialSupplier.objects.filter(material=material, supplier=supplier).delete()
     messages.success(request, "Offer removed.")
     return redirect("material-detail", pk=material_pk)
+
+
+class PublicMaterialListView(ListView):
+    model = Material
+    template_name = "lumberyard/public_material_list.html"
+    context_object_name = "materials"
+    paginate_by = 10
+
+    queryset = Material.objects.select_related("category").annotate(
+        total_stock=Sum("stock_balances__quantity")
+    ).order_by("name", "pk")
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        query = self.request.GET.get("query", "").strip()
+        category = self.request.GET.get("category", "").strip()
+
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query)
+                | Q(sku__icontains=query)
+            )
+
+        if category.isdigit():
+            queryset = queryset.filter(category__id=category)
+
+        return queryset
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()
+        context["selected_category"] = self.request.GET.get(
+            "category", ""
+        ).strip()
+        return context

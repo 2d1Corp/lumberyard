@@ -11,7 +11,10 @@
           </span>
           <span class="fw-bold">Lumberyard</span>
         </a>
-
+        <a class="nav-link ms-4"
+           href="{% url 'public-material-list' %}">
+          Catalog
+        </a>
         <div class="d-flex align-items-center gap-2 ms-auto">
           {% if user.is_authenticated %}
             <span class="public-username d-none d-sm-inline">

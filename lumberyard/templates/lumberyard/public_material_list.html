@@ -1,0 +1,97 @@
+{% extends "lumberyard/public_base.html" %}
+
+{% block title %}Catalog | Lumberyard{% endblock %}
+
+{% block content %}
+  <section class="public-section">
+    <div class="public-section-heading">
+      <div>
+        <p class="public-hero-eyebrow mb-2">Our assortment</p>
+        <h1>Material catalog</h1>
+      </div>
+    </div>
+
+    <form method="get" class="row g-2 mb-4">
+      <div class="col-md-6">
+        <label for="catalog-search" class="visually-hidden">
+          Search materials
+        </label>
+        <input
+            id="catalog-search"
+            type="search"
+            name="query"
+            value="{{ request.GET.query }}"
+            class="form-control"
+            placeholder="Search by name or SKU"
+        >
+      </div>
+
+      <div class="col-md-4">
+        <label for="category-filter" class="visually-hidden">
+          Category
+        </label>
+        <select
+            id="category-filter"
+            name="category"
+            class="form-select"
+        >
+          <option value="">All categories</option>
+
+          {% for category in categories %}
+            <option
+                value="{{ category.pk }}"
+                {% if selected_category == category.pk|stringformat:"s" %}
+                  selected
+                {% endif %}
+            >
+              {{ category.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">
+          Search
+        </button>
+      </div>
+    </form>
+
+    <div class="row g-3">
+      {% for material in materials %}
+        <div class="col-md-6 col-lg-4">
+          <article class="card h-100">
+            <div class="card-body">
+              <p class="text-secondary small mb-2">
+                {{ material.category.name }}
+              </p>
+
+              <h2 class="h5">{{ material.name }}</h2>
+
+              {% if material.species %}
+                <p class="mb-2">
+                  {{ material.species }}
+                  {% if material.grade %}· {{ material.grade }}{% endif %}
+                </p>
+              {% endif %}
+
+              <p class="fw-semibold mb-2">
+                €{{ material.sale_price }} / {{ material.get_unit_display }}
+              </p>
+
+              {% if material.total_stock %}
+                <span class="badge text-bg-success">Available</span>
+              {% else %}
+                <span class="badge text-bg-secondary">Contact us</span>
+              {% endif %}
+            </div>
+          </article>
+        </div>
+      {% empty %}
+        <p class="text-secondary">No materials found.</p>
+      {% endfor %}
+    </div>
+
+    {% include "lumberyard/includes/pagination.html" %}
+  </section>
+{% endblock %}

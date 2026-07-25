@@ -41,17 +41,22 @@
     <div class="row g-3">
       {% for category in categories %}
         <div class="col-sm-6 col-lg-4">
-          <article class="public-category-card">
-          <span class="public-category-icon">
-            <i class="bi bi-box-seam"></i>
-          </span>
+          <a
+              href="{% url 'public-material-list' %}?category={{ category.pk }}"
+              class="d-block h-100 text-decoration-none text-reset"
+          >
+            <article class="public-category-card h-100">
+             <span class="public-category-icon">
+               <i class="bi bi-box-seam"></i>
+             </span>
 
-            <h3>{{ category.name }}</h3>
+              <h3>{{ category.name }}</h3>
 
-            <p>
-              Timber materials for construction and woodworking.
-            </p>
-          </article>
+              <p>
+                Timber materials for construction and woodworking.
+              </p>
+            </article>
+          </a>
         </div>
       {% empty %}
         <div class="col-12">
