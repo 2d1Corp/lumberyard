@@ -249,6 +249,9 @@ def stockbalance_update(request, material_pk, warehouse_pk):
 
 class SupplierListView(LoginRequiredMixin, ListView):
     model = Supplier
+    queryset = Supplier.objects.annotate(
+        offer_count=Count("material_offers"),
+    ).order_by("name", "pk")
 
 
 class SupplierCreateView(LoginRequiredMixin, CreateView):

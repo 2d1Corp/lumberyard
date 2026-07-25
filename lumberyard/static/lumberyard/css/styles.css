@@ -481,6 +481,45 @@ a:hover {
   border-style: dashed;
 }
 
+/* Internal supplier list */
+
+.supplier-page-header {
+  padding-bottom: 0.25rem;
+}
+
+.supplier-list-card {
+  box-shadow: 0 0.5rem 1.5rem rgba(20, 41, 31, 0.04);
+}
+
+.supplier-list-row {
+  transition: background-color 150ms ease;
+}
+
+.supplier-list-row:hover {
+  background-color: #faf8f2 !important;
+}
+
+.supplier-list-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 3.5rem;
+  border: 1px solid #eadfce;
+  border-radius: 0.5rem;
+  background-color: #f5eadb;
+  color: var(--ly-accent);
+  font-size: 1.15rem;
+}
+
+.supplier-list-actions .btn {
+  min-width: 5.25rem;
+}
+
+.supplier-empty-state {
+  border-style: dashed;
+}
+
 /* Internal forms and confirmations */
 
 .internal-form-page {
@@ -643,6 +682,10 @@ a:hover {
     padding-left: 4.75rem;
   }
 
+  .supplier-list-actions {
+    padding-left: 4.75rem;
+  }
+
   .internal-form-header {
     flex-direction: column;
     gap: 1rem;
@@ -675,6 +718,10 @@ a:hover {
     width: 100%;
   }
 
+  .supplier-page-header .btn {
+    width: 100%;
+  }
+
   .category-list-image {
     width: 4rem;
     height: 3.25rem;
@@ -688,6 +735,13 @@ a:hover {
   }
 
   .warehouse-list-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    padding-left: 0;
+  }
+
+  .supplier-list-actions {
     display: grid !important;
     grid-template-columns: 1fr 1fr;
     width: 100%;
