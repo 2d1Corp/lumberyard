@@ -283,6 +283,9 @@ class SupplierDeleteView(LoginRequiredMixin, DeleteView):
 
 class CategoryListView(LoginRequiredMixin, ListView):
     model = Category
+    queryset = Category.objects.annotate(
+        material_count=Count("materials"),
+    ).order_by("name", "pk")
 
 
 class CategoryCreateView(LoginRequiredMixin, CreateView):

@@ -1,21 +1,50 @@
 {% extends "lumberyard/dashboard_base.html" %}
 
 {% block title %}Delete category | Lumberyard{% endblock %}
+
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-xl-7">
-      <div class="card">
-        <div class="card-body p-4">
-          <h1 class="h3 mb-3">Delete category</h1>
-          <p>Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
-          <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-            <a class="btn btn-sm btn-outline-secondary" href="{% url 'category-list' %}">
+  <div class="internal-form-page">
+    <header class="internal-form-header">
+      <div>
+        <p class="dashboard-eyebrow">Catalog structure</p>
+        <h1 class="h2 mb-1">Delete category</h1>
+        <p class="text-secondary mb-0">
+          Review the category before confirming this action.
+        </p>
+      </div>
+
+      <a class="btn btn-outline-secondary flex-shrink-0"
+         href="{% url 'category-list' %}">
+        <i class="bi bi-arrow-left me-1"></i>
+        Back to categories
+      </a>
+    </header>
+
+    <div class="card internal-form-card internal-danger-card">
+      <div class="card-body">
+        <div class="internal-confirm-icon" aria-hidden="true">
+          <i class="bi bi-trash"></i>
+        </div>
+
+        <h2 class="h4 mb-2">Delete “{{ object.name }}”?</h2>
+        <p class="text-secondary mb-4">
+          This action cannot be undone. A category that still contains
+          materials cannot be deleted.
+        </p>
+
+        <form method="post">
+          {% csrf_token %}
+          <div class="internal-form-actions">
+            <button type="submit" class="btn btn-danger">
+              <i class="bi bi-trash me-1"></i>
+              Delete category
+            </button>
+            <a class="btn btn-outline-secondary"
+               href="{% url 'category-list' %}">
               Cancel
             </a>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>
