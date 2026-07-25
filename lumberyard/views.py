@@ -45,6 +45,22 @@ def dashboard(request):
         "replenishment_count": StockBalance.objects.filter(
             replenishment_requested_at__isnull=False
         ).count(),
+        "category_count": Category.objects.count(),
+        "recent_materials": (
+            Material.objects
+            .select_related("category")
+            .order_by("-pk")[:5]
+        ),
+        "recent_replenishments": (
+            StockBalance.objects
+            .filter(replenishment_requested_at__isnull=False)
+            .select_related(
+                "material",
+                "warehouse",
+                "replenishment_requested_by",
+            )
+            .order_by("-replenishment_requested_at")[:5]
+        ),
     }
     return render(request, "lumberyard/dashboard.html", context)
 

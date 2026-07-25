@@ -3,15 +3,142 @@
 {% block title %}Dashboard | Lumberyard{% endblock %}
 
 {% block content %}
-  <h1>Dashboard</h1>
-  <p>Welcome, {{ user.username }}</p>
+  <header class="dashboard-page-header">
+    <div>
+      <p class="dashboard-eyebrow">Inventory workspace</p>
+      <h1>Dashboard</h1>
+      <p class="dashboard-intro">
+        Welcome back, {{ user.first_name|default:user.username }}.
+        Review the catalog and current replenishment work.
+      </p>
+    </div>
 
-  <p>Materials: {{ material_count }}</p>
-  <p>Suppliers: {{ supplier_count }}</p>
-  <p>Warehouses: {{ warehouse_count }}</p>
-  <p>Workers: {{ worker_count }}</p>
-  <p>
-    Awaiting replenishment:
-    <a href="{% url 'replenishment-list' %}">{{ replenishment_count }}</a>
-  </p>
+    <div class="dashboard-quick-actions">
+      <a class="btn btn-primary" href="{% url 'material-create' %}">
+        <i class="bi bi-plus-lg me-1"></i>
+        Add material
+      </a>
+      <a class="btn btn-outline-secondary"
+         href="{% url 'replenishment-list' %}">
+        <i class="bi bi-cart-plus me-1"></i>
+        Replenishment
+      </a>
+    </div>
+  </header>
+
+  <section class="dashboard-metrics" aria-label="Inventory summary">
+    <a class="dashboard-metric-card" href="{% url 'material-list' %}">
+      <span class="dashboard-metric-icon"><i class="bi bi-box-seam"></i></span>
+      <span>
+        <strong>{{ material_count }}</strong>
+        <small>Materials</small>
+      </span>
+    </a>
+    <a class="dashboard-metric-card" href="{% url 'category-list' %}">
+      <span class="dashboard-metric-icon"><i class="bi bi-bookmark"></i></span>
+      <span>
+        <strong>{{ category_count }}</strong>
+        <small>Categories</small>
+      </span>
+    </a>
+    <a class="dashboard-metric-card" href="{% url 'warehouse-list' %}">
+      <span class="dashboard-metric-icon"><i class="bi bi-building"></i></span>
+      <span>
+        <strong>{{ warehouse_count }}</strong>
+        <small>Warehouses</small>
+      </span>
+    </a>
+    <a class="dashboard-metric-card" href="{% url 'supplier-list' %}">
+      <span class="dashboard-metric-icon"><i class="bi bi-truck"></i></span>
+      <span>
+        <strong>{{ supplier_count }}</strong>
+        <small>Suppliers</small>
+      </span>
+    </a>
+    <a class="dashboard-metric-card dashboard-metric-warning"
+       href="{% url 'replenishment-list' %}">
+      <span class="dashboard-metric-icon"><i class="bi bi-cart-plus"></i></span>
+      <span>
+        <strong>{{ replenishment_count }}</strong>
+        <small>Replenishment requests</small>
+      </span>
+    </a>
+  </section>
+
+  <div class="dashboard-panels">
+    <section class="dashboard-panel">
+      <div class="dashboard-panel-heading">
+        <div>
+          <p class="dashboard-eyebrow">Catalog activity</p>
+          <h2>Recently added materials</h2>
+        </div>
+        <a href="{% url 'material-list' %}">View all</a>
+      </div>
+
+      {% if recent_materials %}
+        <div class="dashboard-list">
+          {% for material in recent_materials %}
+            <a class="dashboard-list-row"
+               href="{% url 'material-detail' material.pk %}">
+              <span class="dashboard-list-icon">
+                <i class="bi bi-box-seam"></i>
+              </span>
+              <span class="dashboard-list-main">
+                <strong>{{ material.name }}</strong>
+                <small>{{ material.category.name }}</small>
+              </span>
+              <code>{{ material.sku }}</code>
+              <i class="bi bi-chevron-right dashboard-list-arrow"></i>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="dashboard-empty">
+          <i class="bi bi-box-seam"></i>
+          <p>No materials yet.</p>
+          <a href="{% url 'material-create' %}">Add the first material</a>
+        </div>
+      {% endif %}
+    </section>
+
+    <section class="dashboard-panel">
+      <div class="dashboard-panel-heading">
+        <div>
+          <p class="dashboard-eyebrow">Action required</p>
+          <h2>Active replenishment</h2>
+        </div>
+        <a href="{% url 'replenishment-list' %}">View all</a>
+      </div>
+
+      {% if recent_replenishments %}
+        <div class="dashboard-list">
+          {% for stock in recent_replenishments %}
+            <a class="dashboard-list-row"
+               href="{% url 'material-detail' stock.material_id %}">
+              <span class="dashboard-list-icon dashboard-list-icon-warning">
+                <i class="bi bi-exclamation-lg"></i>
+              </span>
+              <span class="dashboard-list-main">
+                <strong>{{ stock.material.name }}</strong>
+                <small>
+                  {{ stock.warehouse.name }} ·
+                  {{ stock.replenishment_requested_by|default:"Unknown worker" }}
+                </small>
+              </span>
+              <time datetime="{{ stock.replenishment_requested_at|date:'c' }}">
+                {{ stock.replenishment_requested_at|date:"M j, H:i" }}
+              </time>
+              <i class="bi bi-chevron-right dashboard-list-arrow"></i>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="dashboard-empty">
+          <i class="bi bi-check2-circle"></i>
+          <p>No active replenishment requests.</p>
+          <span>The shared list is currently clear.</span>
+        </div>
+      {% endif %}
+    </section>
+  </div>
 {% endblock %}

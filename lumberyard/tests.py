@@ -1,10 +1,12 @@
 from io import StringIO
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
 from .models import (
     Category,
@@ -20,6 +22,78 @@ from .templatetags.lumberyard_extras import (
     category_image,
     material_image,
 )
+
+
+class DashboardViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = Worker.objects.create_user(
+            username="dashboard-worker",
+            password="test-password",
+            phone_number="+10000000001",
+        )
+        cls.category = Category.objects.create(name="Dashboard Lumber")
+
+        for index in range(6):
+            Material.objects.create(
+                name=f"Dashboard Material {index}",
+                sku=f"DASH-{index:03}",
+                category=cls.category,
+            )
+
+        cls.warehouse = Warehouse.objects.create(
+            name="Dashboard Warehouse",
+        )
+        cls.requested_stock = StockBalance.objects.create(
+            material=Material.objects.order_by("-pk").first(),
+            warehouse=cls.warehouse,
+            quantity="12.000",
+            replenishment_requested_at=timezone.now(),
+            replenishment_requested_by=cls.user,
+        )
+        StockBalance.objects.create(
+            material=Material.objects.order_by("pk").first(),
+            warehouse=cls.warehouse,
+            quantity="4.000",
+        )
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_dashboard_uses_real_counts_and_recent_data(self):
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["material_count"], 6)
+        self.assertEqual(response.context["category_count"], 1)
+        self.assertEqual(response.context["warehouse_count"], 1)
+        self.assertEqual(response.context["replenishment_count"], 1)
+        self.assertQuerySetEqual(
+            response.context["recent_materials"],
+            Material.objects.order_by("-pk")[:5],
+        )
+        self.assertQuerySetEqual(
+            response.context["recent_replenishments"],
+            [self.requested_stock],
+        )
+
+    def test_dashboard_renders_recent_related_details(self):
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertContains(response, self.requested_stock.material.name)
+        self.assertContains(response, self.category.name)
+        self.assertContains(response, self.warehouse.name)
+        self.assertContains(response, self.user.username)
+
+    def test_anonymous_user_is_redirected_to_login(self):
+        self.client.logout()
+
+        response = self.client.get(reverse("dashboard"))
+
+        self.assertRedirects(
+            response,
+            f"{reverse('login')}?next={reverse('dashboard')}",
+        )
 
 
 class CategoryImageFilterTests(TestCase):
