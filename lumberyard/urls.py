@@ -131,5 +131,10 @@ urlpatterns = [
         "catalog/",
         views.PublicMaterialListView.as_view(),
         name="public-material-list",
-    )
+    ),
+    path(
+        "catalog/<int:pk>/",
+        views.PublicMaterialDetailView.as_view(),
+        name="public-material-detail",
+    ),
 ]

@@ -1,0 +1,104 @@
+{% extends "lumberyard/public_base.html" %}
+
+{% block title %}{{ material.name }} | Lumberyard{% endblock %}
+
+{% block content %}
+  <section class="public-section">
+    <a
+        href="{% url 'public-material-list' %}"
+        class="d-inline-flex align-items-center gap-2 mb-4 text-decoration-none"
+    >
+      <i class="bi bi-arrow-left"></i>
+      Back to catalog
+    </a>
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <p class="public-hero-eyebrow mb-2">
+          {{ material.category.name }}
+        </p>
+
+        <h1 class="mb-3">{{ material.name }}</h1>
+
+        {% if material.description %}
+          <p class="lead text-secondary">
+            {{ material.description|linebreaksbr }}
+          </p>
+        {% endif %}
+
+        <div class="row g-3 mt-2">
+          {% if material.species %}
+            <div class="col-sm-6">
+              <p class="text-secondary small mb-1">Species</p>
+              <p class="fw-semibold">{{ material.species }}</p>
+            </div>
+          {% endif %}
+
+          {% if material.grade %}
+            <div class="col-sm-6">
+              <p class="text-secondary small mb-1">Grade</p>
+              <p class="fw-semibold">{{ material.grade }}</p>
+            </div>
+          {% endif %}
+
+          {% if material.thickness_mm %}
+            <div class="col-sm-4">
+              <p class="text-secondary small mb-1">Thickness</p>
+              <p class="fw-semibold">
+                {{ material.thickness_mm }} mm
+              </p>
+            </div>
+          {% endif %}
+
+          {% if material.width_mm %}
+            <div class="col-sm-4">
+              <p class="text-secondary small mb-1">Width</p>
+              <p class="fw-semibold">
+                {{ material.width_mm }} mm
+              </p>
+            </div>
+          {% endif %}
+
+          {% if material.length_mm %}
+            <div class="col-sm-4">
+              <p class="text-secondary small mb-1">Length</p>
+              <p class="fw-semibold">
+                {{ material.length_mm }} mm
+              </p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <aside class="card">
+          <div class="card-body">
+            <p class="text-secondary small mb-1">Sale price</p>
+            <p class="fs-3 fw-bold mb-3">
+              €{{ material.sale_price }}
+            </p>
+
+            <p class="text-secondary small mb-1">Sold by</p>
+            <p class="fw-semibold mb-3">
+              {{ material.get_unit_display }}
+            </p>
+
+            {% if material.total_stock %}
+              <span class="badge text-bg-success">
+                Available
+              </span>
+            {% else %}
+              <span class="badge text-bg-secondary">
+                Contact us
+              </span>
+            {% endif %}
+
+            <p class="small text-secondary mt-3 mb-0">
+              Contact our team to confirm current availability.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+{% endblock %}

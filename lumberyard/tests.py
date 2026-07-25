@@ -328,3 +328,95 @@ class PublicMaterialListViewTests(TestCase):
 
         self.assertContains(response, self.material.name)
         self.assertNotContains(response, other_material.name)
+
+
+class PublicMaterialDetailViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.category = Category.objects.create(
+            name="Detail Test Boards",
+        )
+        cls.material = Material.objects.create(
+            name="Detailed Oak Board",
+            sku="DETAIL-OAK-001",
+            category=cls.category,
+            description="Public material description.",
+            sale_price="42.50",
+            species="Oak",
+            grade="A",
+            thickness_mm=25,
+            width_mm=150,
+            length_mm=3000,
+        )
+
+        warehouse = Warehouse.objects.create(
+            name="Private Detail Warehouse",
+        )
+        StockBalance.objects.create(
+            material=cls.material,
+            warehouse=warehouse,
+            quantity="91.125",
+        )
+
+        supplier = Supplier.objects.create(
+            name="Private Detail Supplier",
+        )
+        MaterialSupplier.objects.create(
+            material=cls.material,
+            supplier=supplier,
+            purchase_price="19.75",
+            supplier_sku="PRIVATE-DETAIL-SKU",
+        )
+
+        cls.url = reverse(
+            "public-material-detail",
+            args=[cls.material.pk],
+        )
+
+    def test_detail_is_public_and_hides_internal_data(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response,
+            "lumberyard/public_material_detail.html",
+        )
+
+        self.assertContains(response, self.material.name)
+        self.assertContains(
+            response,
+            self.material.description,
+        )
+        self.assertContains(response, "Available")
+        self.assertContains(response, "42.50")
+
+        self.assertNotContains(response, "91.125")
+        self.assertNotContains(
+            response,
+            "Private Detail Warehouse",
+        )
+        self.assertNotContains(
+            response,
+            "Private Detail Supplier",
+        )
+        self.assertNotContains(
+            response,
+            "PRIVATE-DETAIL-SKU",
+        )
+        self.assertNotContains(response, "19.75")
+
+    def test_detail_shows_contact_us_without_stock(self):
+        unavailable_material = Material.objects.create(
+            name="Unavailable Test Board",
+            sku="UNAVAILABLE-001",
+            category=self.category,
+        )
+
+        response = self.client.get(
+            reverse(
+                "public-material-detail",
+                args=[unavailable_material.pk],
+            )
+        )
+
+        self.assertContains(response, "Contact us")

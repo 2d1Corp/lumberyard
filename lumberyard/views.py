@@ -400,3 +400,17 @@ class PublicMaterialListView(ListView):
             "category", ""
         ).strip()
         return context
+
+
+class PublicMaterialDetailView(DetailView):
+    model = Material
+    template_name = "lumberyard/public_material_detail.html"
+    context_object_name = "material"
+
+    queryset = (
+        Material.objects
+        .select_related("category")
+        .annotate(
+            total_stock=Sum("stock_balances__quantity")
+        )
+    )

@@ -66,8 +66,14 @@
                 {{ material.category.name }}
               </p>
 
-              <h2 class="h5">{{ material.name }}</h2>
-
+              <h2 class="h5">
+                <a
+                    href="{% url 'public-material-detail' material.pk %}"
+                    class="text-decoration-none stretched-link"
+                >
+                  {{ material.name }}
+                </a>
+              </h2>
               {% if material.species %}
                 <p class="mb-2">
                   {{ material.species }}
