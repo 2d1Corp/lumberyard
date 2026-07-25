@@ -1,11 +1,18 @@
 {% extends "lumberyard/public_base.html" %}
+{% load static lumberyard_extras %}
 
 {% block title %}Home | Lumberyard{% endblock %}
 
 {% block content %}
   <section class="public-hero">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-7">
+    <img
+        class="public-hero-image"
+        src="{% static 'lumberyard/images/public/hero-timber-yard.webp' %}"
+        alt=""
+        fetchpriority="high"
+    >
+    <div class="container public-hero-inner">
+      <div class="public-hero-panel">
         <p class="public-hero-eyebrow">
           Timber and lumber supply
         </p>
@@ -15,41 +22,72 @@
         </h1>
 
         <p class="public-hero-description">
-          Materials for construction, production and woodworking,
-          organized from supplier to warehouse.
+          Reliable timber materials for construction, production and
+          woodworking—from our yard to your project.
         </p>
 
-        <div class="d-flex flex-wrap gap-2 mt-4">
-          <a class="btn btn-primary"
+        <div class="d-flex flex-wrap gap-2">
+          <a class="btn btn-primary btn-lg"
              href="{% url 'public-material-list' %}">
             Browse catalog
           </a>
-          <a class="btn btn-outline-secondary"
+          <a class="btn btn-light btn-lg"
              href="{% url 'delivery' %}">
             Pickup and delivery
           </a>
         </div>
       </div>
+    </div>
+  </section>
 
-      <div class="col-lg-5">
-        <div class="public-hero-visual" aria-hidden="true">
-          <i class="bi bi-tree-fill"></i>
-          <span>Lumberyard</span>
+  <section class="public-service-strip">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="public-service-item">
+            <i class="bi bi-box-seam"></i>
+            <div>
+              <strong>Practical assortment</strong>
+              <span>Core timber and sheet materials</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="public-service-item">
+            <i class="bi bi-geo-alt"></i>
+            <div>
+              <strong>Customer pickup</strong>
+              <span>{{ public_contact.location }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="public-service-item">
+            <i class="bi bi-chat-dots"></i>
+            <div>
+              <strong>Direct support</strong>
+              <span>Confirm stock and delivery with our team</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
-  <section class="public-section">
+
+  <section class="public-section container">
     <div class="public-section-heading">
       <div>
-        <p class="public-hero-eyebrow mb-2">
-          Our assortment
-        </p>
+        <p class="public-hero-eyebrow mb-2">Our assortment</p>
         <h2 class="mb-0">Material categories</h2>
       </div>
+      <a class="public-text-link"
+         href="{% url 'public-material-list' %}">
+        View full catalog
+        <i class="bi bi-arrow-right"></i>
+      </a>
     </div>
 
-    <div class="row g-3">
+    <div class="row g-4">
       {% for category in categories %}
         <div class="col-sm-6 col-lg-4">
           <a
@@ -57,15 +95,20 @@
               class="d-block h-100 text-decoration-none text-reset"
           >
             <article class="public-category-card h-100">
-             <span class="public-category-icon">
-               <i class="bi bi-box-seam"></i>
-             </span>
-
-              <h3>{{ category.name }}</h3>
-
-              <p>
-                Timber materials for construction and woodworking.
-              </p>
+              <img
+                  src="{% static category|category_image %}"
+                  alt="{{ category.name }}"
+                  loading="lazy"
+              >
+              <div class="public-category-card-body">
+                <div>
+                  <h3>{{ category.name }}</h3>
+                  <p>Explore available materials and dimensions.</p>
+                </div>
+                <span class="public-card-arrow" aria-hidden="true">
+                  <i class="bi bi-arrow-up-right"></i>
+                </span>
+              </div>
             </article>
           </a>
         </div>

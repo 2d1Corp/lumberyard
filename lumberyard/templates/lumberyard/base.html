@@ -26,6 +26,8 @@
       href="{% static 'lumberyard/css/styles.css' %}"
       rel="stylesheet"
   >
+  {% block extra_css %}
+  {% endblock %}
   <title>{% block title %}Lumberyard{% endblock %}</title>
 </head>
 <body>

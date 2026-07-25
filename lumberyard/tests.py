@@ -1,6 +1,7 @@
 from io import StringIO
 
 from django.conf import settings
+from django.contrib.staticfiles import finders
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
@@ -14,6 +15,51 @@ from .models import (
     Warehouse,
     Worker,
 )
+from .templatetags.lumberyard_extras import (
+    MATERIAL_IMAGES,
+    category_image,
+    material_image,
+)
+
+
+class CategoryImageFilterTests(TestCase):
+    def test_known_category_uses_curated_image(self):
+        category = Category(name="Sheet Goods")
+
+        self.assertEqual(
+            category_image(category),
+            "lumberyard/images/public/category-sheet-materials.webp",
+        )
+
+    def test_unknown_category_uses_fallback_image(self):
+        category = Category(name="Custom Timber Product")
+
+        self.assertEqual(
+            category_image(category),
+            "lumberyard/images/public/category-mixed-timber.webp",
+        )
+
+    def test_known_material_uses_its_own_image(self):
+        material = Material(sku="OAK-BOARD-25")
+
+        self.assertEqual(
+            material_image(material),
+            "lumberyard/images/public/material-oak-board.webp",
+        )
+
+    def test_unknown_material_uses_its_category_image(self):
+        category = Category(name="Sheet Goods")
+        material = Material(sku="NEW-SHEET-001", category=category)
+
+        self.assertEqual(
+            material_image(material),
+            "lumberyard/images/public/category-sheet-materials.webp",
+        )
+
+    def test_material_image_paths_point_to_static_files(self):
+        for image_path in MATERIAL_IMAGES.values():
+            with self.subTest(image_path=image_path):
+                self.assertIsNotNone(finders.find(image_path))
 
 
 class SeedDataCommandTests(TestCase):

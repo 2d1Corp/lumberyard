@@ -1,8 +1,16 @@
 {% extends "lumberyard/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+  <link
+      href="{% static 'lumberyard/css/public.css' %}"
+      rel="stylesheet"
+  >
+{% endblock %}
 
 {% block body %}
   <header class="public-header">
-    <nav class="navbar py-3">
+    <nav class="navbar navbar-expand-lg py-3" aria-label="Main navigation">
       <div class="container">
         <a class="navbar-brand d-flex align-items-center gap-2 m-0"
            href="{% url 'index' %}">
@@ -11,48 +19,100 @@
           </span>
           <span class="fw-bold">Lumberyard</span>
         </a>
-        <a class="nav-link ms-4"
-           href="{% url 'public-material-list' %}">
-          Catalog
-        </a>
-        <a class="nav-link ms-3"
-           href="{% url 'delivery' %}">
-          Delivery
-        </a>
-        <a class="nav-link ms-3"
-           href="{% url 'contacts' %}">
-          Contacts
-        </a>
-        <div class="d-flex align-items-center gap-2 ms-auto">
-          {% if user.is_authenticated %}
-            <span class="public-username d-none d-sm-inline">
-            {{ user.username }}
-            </span>
 
-            <a class="btn btn-sm btn-primary"
-               href="{% url 'dashboard' %}">
-              Dashboard
-            </a>
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#publicNavigation"
+            aria-controls="publicNavigation"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <form action="{% url 'logout' %}" method="post">
-              {% csrf_token %}
-              <button type="submit"
-                      class="btn btn-sm btn-outline-secondary">
-                Logout
-              </button>
-            </form>
-          {% else %}
-            <a class="btn btn-sm btn-primary"
-               href="{% url 'login' %}">
-              Staff login
+        <div class="collapse navbar-collapse" id="publicNavigation">
+          <div class="navbar-nav public-nav-links">
+            <a class="nav-link"
+               href="{% url 'public-material-list' %}">
+              Catalog
             </a>
-          {% endif %}
+            <a class="nav-link"
+               href="{% url 'delivery' %}">
+              Delivery
+            </a>
+            <a class="nav-link"
+               href="{% url 'contacts' %}">
+              Contacts
+            </a>
+          </div>
+
+          <div class="public-nav-actions">
+            {% if user.is_authenticated %}
+              <span class="public-username">
+                {{ user.username }}
+              </span>
+
+              <a class="btn btn-sm btn-primary"
+                 href="{% url 'dashboard' %}">
+                Dashboard
+              </a>
+
+              <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn btn-sm btn-outline-secondary">
+                  Logout
+                </button>
+              </form>
+            {% else %}
+              <a class="btn btn-sm btn-outline-secondary"
+                 href="{% url 'login' %}">
+                Staff login
+              </a>
+            {% endif %}
+          </div>
         </div>
       </div>
     </nav>
   </header>
-  <main class="container py-4">
+
+  <main>
     {% block content %}
     {% endblock %}
   </main>
+
+  <footer class="public-footer">
+    <div class="container">
+      <div class="public-footer-grid">
+        <div>
+          <a class="public-footer-brand" href="{% url 'index' %}">
+            <i class="bi bi-tree-fill"></i>
+            Lumberyard
+          </a>
+          <p class="public-footer-copy">
+            Timber materials for construction, production and woodworking.
+          </p>
+        </div>
+
+        <div>
+          <p class="public-footer-heading">Visit</p>
+          <p class="mb-0">{{ public_contact.location }}</p>
+        </div>
+
+        <div>
+          <p class="public-footer-heading">Contact</p>
+          <a href="mailto:{{ public_contact.email }}">
+            {{ public_contact.email }}
+          </a>
+        </div>
+      </div>
+
+      <div class="public-footer-bottom">
+        <span>© {% now "Y" %} Lumberyard</span>
+        <a href="{% url 'contacts' %}">Contact our team</a>
+      </div>
+    </div>
+  </footer>
 {% endblock %}

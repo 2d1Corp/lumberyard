@@ -3,62 +3,80 @@
 {% block title %}Pickup and Delivery | Lumberyard{% endblock %}
 
 {% block content %}
-  <section class="public-section">
-    <p class="public-hero-eyebrow mb-2">Getting your materials</p>
-    <h1 class="mb-3">Pickup and delivery</h1>
+  <section class="public-page-header">
+    <div class="container">
+      <p class="public-hero-eyebrow mb-2">Getting your materials</p>
+      <h1>Pickup and delivery</h1>
+      <p>
+        Collect prepared timber from {{ public_contact.location }} or
+        contact us to discuss delivery options for your order.
+      </p>
+    </div>
+  </section>
 
-    <p class="lead text-secondary mb-5">
-      Collect prepared timber from {{ public_contact.location }}.
-      Contact us to discuss delivery options for your order.
-    </p>
+  <section class="public-section container">
+    <div class="public-section-heading">
+      <div>
+        <p class="public-hero-eyebrow mb-2">How it works</p>
+        <h2 class="mb-0">A straightforward collection process</h2>
+      </div>
+    </div>
 
     <div class="row g-4">
       <div class="col-md-4">
-        <article class="card h-100">
-          <div class="card-body">
-            <i class="bi bi-geo-alt fs-2 text-success"></i>
-            <h2 class="h5 mt-3">Customer pickup</h2>
-            <p class="text-secondary mb-0">
-              Pick up your prepared materials in
-              {{ public_contact.location }}.
-            </p>
-          </div>
+        <article class="public-info-card h-100">
+          <span class="public-info-card-icon">
+            <i class="bi bi-chat-square-text"></i>
+          </span>
+          <p class="public-info-card-step">01</p>
+          <h3>Arrange your order</h3>
+          <p>
+            Contact our team to confirm materials, dimensions and
+            current availability.
+          </p>
         </article>
       </div>
 
       <div class="col-md-4">
-        <article class="card h-100">
-          <div class="card-body">
-            <i class="bi bi-box-seam fs-2 text-success"></i>
-            <h2 class="h5 mt-3">Prepared orders</h2>
-            <p class="text-secondary mb-0">
-              Arrange your order in advance for quicker collection.
-            </p>
-          </div>
+        <article class="public-info-card h-100">
+          <span class="public-info-card-icon">
+            <i class="bi bi-box-seam"></i>
+          </span>
+          <p class="public-info-card-step">02</p>
+          <h3>We prepare it</h3>
+          <p>
+            Arrange the order in advance so your materials are ready
+            for quicker collection.
+          </p>
         </article>
       </div>
 
       <div class="col-md-4">
-        <article class="card h-100">
-          <div class="card-body">
-            <i class="bi bi-truck fs-2 text-success"></i>
-            <h2 class="h5 mt-3">Loading assistance</h2>
-            <p class="text-secondary mb-0">
-              High-lift forklift loading is available on site.
-            </p>
-          </div>
+        <article class="public-info-card h-100">
+          <span class="public-info-card-icon">
+            <i class="bi bi-truck"></i>
+          </span>
+          <p class="public-info-card-step">03</p>
+          <h3>Pickup or delivery</h3>
+          <p>
+            Pick up in {{ public_contact.location }} with forklift
+            loading, or ask about available transport options.
+          </p>
         </article>
       </div>
     </div>
 
-    <div class="mt-5">
-      <h2 class="h4">Need delivery?</h2>
-      <p class="text-secondary">
-        Contact us to discuss the destination, material volume and
-        available transport options.
-      </p>
-      <a class="btn btn-primary" href="{% url 'contacts' %}">
-        Contact us
+    <div class="public-cta-panel">
+      <div>
+        <p class="public-hero-eyebrow mb-2">Need delivery?</p>
+        <h2>Tell us where the timber needs to go</h2>
+        <p>
+          Share the destination, material volume and preferred timing
+          so our team can discuss available options.
+        </p>
+      </div>
+      <a class="btn btn-light btn-lg" href="{% url 'contacts' %}">
+        Contact our team
       </a>
     </div>
   </section>

@@ -1,17 +1,25 @@
 {% extends "lumberyard/public_base.html" %}
+{% load static lumberyard_extras %}
 
 {% block title %}Catalog | Lumberyard{% endblock %}
 
 {% block content %}
-  <section class="public-section">
+  <section class="public-page-header">
+    <div class="container">
+      <p class="public-hero-eyebrow mb-2">Our assortment</p>
+      <h1>Material catalog</h1>
+      <p>
+        Browse timber by category or search by material name and SKU.
+      </p>
+    </div>
+  </section>
+
+  <section class="public-section container">
     <div class="public-section-heading">
-      <div>
-        <p class="public-hero-eyebrow mb-2">Our assortment</p>
-        <h1>Material catalog</h1>
-      </div>
+      <h2 class="h4 mb-0">Available materials</h2>
     </div>
 
-    <form method="get" class="row g-2 mb-4">
+    <form method="get" class="public-filter-panel row g-2">
       <div class="col-md-6">
         <label for="catalog-search" class="visually-hidden">
           Search materials
@@ -57,16 +65,21 @@
       </div>
     </form>
 
-    <div class="row g-3">
+    <div class="row g-4">
       {% for material in materials %}
         <div class="col-md-6 col-lg-4">
-          <article class="card h-100">
-            <div class="card-body">
-              <p class="text-secondary small mb-2">
+          <article class="public-material-card h-100">
+            <img
+                src="{% static material|material_image %}"
+                alt="{{ material.name }}"
+                loading="lazy"
+            >
+            <div class="public-material-card-body">
+              <p class="public-card-kicker">
                 {{ material.category.name }}
               </p>
 
-              <h2 class="h5">
+              <h2>
                 <a
                     href="{% url 'public-material-detail' material.pk %}"
                     class="text-decoration-none stretched-link"
@@ -74,27 +87,39 @@
                   {{ material.name }}
                 </a>
               </h2>
+
               {% if material.species %}
-                <p class="mb-2">
+                <p class="public-material-meta">
                   {{ material.species }}
                   {% if material.grade %}· {{ material.grade }}{% endif %}
                 </p>
               {% endif %}
 
-              <p class="fw-semibold mb-2">
-                €{{ material.sale_price }} / {{ material.get_unit_display }}
-              </p>
+              <div class="public-material-card-footer">
+                <p>
+                  €{{ material.sale_price }}
+                  <span>/ {{ material.get_unit_display }}</span>
+                </p>
 
-              {% if material.total_stock %}
-                <span class="badge text-bg-success">Available</span>
-              {% else %}
-                <span class="badge text-bg-secondary">Contact us</span>
-              {% endif %}
+                {% if material.total_stock %}
+                  <span class="public-stock public-stock--available">
+                    Available
+                  </span>
+                {% else %}
+                  <span class="public-stock">Contact us</span>
+                {% endif %}
+              </div>
             </div>
           </article>
         </div>
       {% empty %}
-        <p class="text-secondary">No materials found.</p>
+        <div class="col-12">
+          <div class="public-empty-state">
+            <i class="bi bi-search"></i>
+            <h2 class="h5">No materials found</h2>
+            <p>Try another search term or choose all categories.</p>
+          </div>
+        </div>
       {% endfor %}
     </div>
 
