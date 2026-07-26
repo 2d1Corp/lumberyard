@@ -92,25 +92,42 @@ Python 3.12 or newer is recommended.
    pip install -r requirements.txt
    ```
 
-5. Apply the database migrations:
+5. Create a local environment file.
+
+   On Windows:
+
+   ```bash
+   copy .env.example .env
+   ```
+
+   On macOS or Linux:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   The example values are suitable for local development. Use a separate
+   secret key and set `DJANGO_DEBUG=False` outside the local environment.
+
+6. Apply the database migrations:
 
    ```bash
    python manage.py migrate
    ```
 
-6. Load the demo catalog and inventory data:
+7. Load the demo catalog and inventory data:
 
    ```bash
    python manage.py seed_data
    ```
 
-7. Create a user for the internal workspace:
+8. Create a user for the internal workspace:
 
    ```bash
    python manage.py createsuperuser
    ```
 
-8. Start the development server:
+9. Start the development server:
 
    ```bash
    python manage.py runserver
