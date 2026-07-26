@@ -21,8 +21,9 @@ The project was created as part of my Python and Django studies.
 - Material details and availability status
 - Delivery and contact information
 
-The public catalog does not show exact stock quantities, warehouse details,
-suppliers, or purchase prices.
+The public catalog shows only a general `Available` or `Contact us` status.
+It does not show exact material quantities, internal warehouse names,
+suppliers, their SKUs, or purchase prices.
 
 ### Internal workspace
 
@@ -34,7 +35,10 @@ Authenticated workers can:
 - update material quantities for each warehouse;
 - manage supplier offers and purchase prices;
 - create and clear manual replenishment requests;
-- manage worker accounts when they have the required permissions.
+- view worker accounts;
+- create and delete worker accounts with the required permissions;
+- current and superuser accounts are protected from deletion through the
+  internal interface.
 
 ## Technologies
 
@@ -67,12 +71,12 @@ source is available in
 
 ## Local setup
 
-Python 3.12 or newer is recommended.
+Python 3.12 or newer is required.
 
 1. Clone the repository and open the project directory:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/2d1Corp/lumberyard.git
    cd lumberyard
    ```
 
@@ -84,10 +88,10 @@ Python 3.12 or newer is recommended.
 
 3. Activate it.
 
-   On Windows:
+   In Windows PowerShell:
 
-   ```bash
-   venv\Scripts\activate
+   ```powershell
+   .\venv\Scripts\Activate.ps1
    ```
 
    On macOS or Linux:
@@ -99,15 +103,15 @@ Python 3.12 or newer is recommended.
 4. Install the dependencies:
 
    ```bash
-   pip install -r requirements.txt
+   python -m pip install -r requirements.txt
    ```
 
 5. Create a local environment file.
 
-   On Windows:
+   In Windows PowerShell:
 
-   ```bash
-   copy .env.example .env
+   ```powershell
+   Copy-Item .env.example .env
    ```
 
    On macOS or Linux:
@@ -116,8 +120,9 @@ Python 3.12 or newer is recommended.
    cp .env.example .env
    ```
 
-   The example values are suitable for local development. Use a separate
-   secret key and set `DJANGO_DEBUG=False` outside the local environment.
+   The example values are suitable for local development. Outside the local
+   environment, use a separate secret key, set `DJANGO_DEBUG=False`, and
+   configure `DJANGO_ALLOWED_HOSTS` for the deployed host.
 
 6. Apply the database migrations:
 
