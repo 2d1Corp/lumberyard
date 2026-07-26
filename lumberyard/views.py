@@ -1,18 +1,16 @@
 from decimal import Decimal, InvalidOperation
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
 from django.db.models import Count, ProtectedError, Q, Sum
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views import View
-from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -40,45 +38,46 @@ from lumberyard.models import (
 )
 
 
-def index(request):
-    context = {
-        "categories": Category.objects.all(),
-    }
-    return render(
-        request,
-        "lumberyard/index.html",
-        context,
-    )
+class HomeView(TemplateView):
+    template_name = "lumberyard/index.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["categories"] = Category.objects.all()
+        return context
 
 
-@login_required
-def dashboard(request):
-    context = {
-        "material_count": Material.objects.count(),
-        "supplier_count": Supplier.objects.count(),
-        "warehouse_count": Warehouse.objects.count(),
-        "worker_count": Worker.objects.count(),
-        "replenishment_count": StockBalance.objects.filter(
-            replenishment_requested_at__isnull=False
-        ).count(),
-        "category_count": Category.objects.count(),
-        "recent_materials": (
-            Material.objects
-            .select_related("category")
-            .order_by("-pk")[:5]
-        ),
-        "recent_replenishments": (
-            StockBalance.objects
-            .filter(replenishment_requested_at__isnull=False)
-            .select_related(
-                "material",
-                "warehouse",
-                "replenishment_requested_by",
-            )
-            .order_by("-replenishment_requested_at")[:5]
-        ),
-    }
-    return render(request, "lumberyard/dashboard.html", context)
+class DashboardView(LoginRequiredMixin, TemplateView):
+    template_name = "lumberyard/dashboard.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            "material_count": Material.objects.count(),
+            "supplier_count": Supplier.objects.count(),
+            "warehouse_count": Warehouse.objects.count(),
+            "worker_count": Worker.objects.count(),
+            "replenishment_count": StockBalance.objects.filter(
+                replenishment_requested_at__isnull=False
+            ).count(),
+            "category_count": Category.objects.count(),
+            "recent_materials": (
+                Material.objects
+                .select_related("category")
+                .order_by("-pk")[:5]
+            ),
+            "recent_replenishments": (
+                StockBalance.objects
+                .filter(replenishment_requested_at__isnull=False)
+                .select_related(
+                    "material",
+                    "warehouse",
+                    "replenishment_requested_by",
+                )
+                .order_by("-replenishment_requested_at")[:5]
+            ),
+        })
+        return context
 
 
 class MaterialListView(LoginRequiredMixin, ListView):
@@ -384,28 +383,27 @@ class WarehouseDeleteView(LoginRequiredMixin, DeleteView):
         return redirect(self.get_success_url())
 
 
-@login_required
-@require_POST
-def offer_save(request, material_pk):
-    material = get_object_or_404(Material, pk=material_pk)
-    supplier = get_object_or_404(Supplier, pk=request.POST.get("supplier"))
-    price_raw = request.POST.get("purchase_price", "").strip()
-    try:
-        price = Decimal(price_raw)
-    except (InvalidOperation, ValueError):
-        messages.error(request, "Enter a valid purchase price.")
+class OfferSaveView(LoginRequiredMixin, View):
+    def post(self, request, material_pk):
+        material = get_object_or_404(Material, pk=material_pk)
+        supplier = get_object_or_404(Supplier, pk=request.POST.get("supplier"))
+        price_raw = request.POST.get("purchase_price", "").strip()
+        try:
+            price = Decimal(price_raw)
+        except (InvalidOperation, ValueError):
+            messages.error(request, "Enter a valid purchase price.")
+            return redirect("material-detail", pk=material_pk)
+        if price < 0:
+            messages.error(request, "Purchase price cannot be negative.")
+            return redirect("material-detail", pk=material_pk)
+        supplier_sku = request.POST.get("supplier_sku", "").strip()
+        _, created = MaterialSupplier.objects.update_or_create(
+            material=material,
+            supplier=supplier,
+            defaults={"purchase_price": price, "supplier_sku": supplier_sku},
+        )
+        messages.success(request, "Offer added." if created else "Offer updated.")
         return redirect("material-detail", pk=material_pk)
-    if price < 0:
-        messages.error(request, "Purchase price cannot be negative.")
-        return redirect("material-detail", pk=material_pk)
-    supplier_sku = request.POST.get("supplier_sku", "").strip()
-    _, created = MaterialSupplier.objects.update_or_create(
-        material=material,
-        supplier=supplier,
-        defaults={"purchase_price": price, "supplier_sku": supplier_sku},
-    )
-    messages.success(request, "Offer added." if created else "Offer updated.")
-    return redirect("material-detail", pk=material_pk)
 
 
 class OfferDeleteView(LoginRequiredMixin, View):

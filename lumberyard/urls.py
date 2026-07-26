@@ -4,8 +4,8 @@ from lumberyard import views
 
 urlpatterns = [
     path("", include("django.contrib.auth.urls")),
-    path("", views.index, name="index"),
-    path("dashboard/", views.dashboard, name="dashboard"),
+    path("", views.HomeView.as_view(), name="index"),
+    path("dashboard/", views.DashboardView.as_view(), name="dashboard"),
     path(
         "materials/",
         views.MaterialListView.as_view(),
@@ -119,7 +119,7 @@ urlpatterns = [
         name="warehouse-delete"),
     path(
         "materials/<int:material_pk>/offers/save/",
-        views.offer_save,
+        views.OfferSaveView.as_view(),
         name="offer-save"
     ),
     path(
