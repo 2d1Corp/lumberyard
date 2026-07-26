@@ -1,5 +1,4 @@
 from io import StringIO
-from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.staticfiles import finders

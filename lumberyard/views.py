@@ -1,27 +1,42 @@
 from decimal import Decimal, InvalidOperation
 
-from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import (
     LoginRequiredMixin,
     PermissionRequiredMixin,
 )
-from django.db.models import Count, Q, Sum, ProtectedError
+from django.db.models import Count, ProtectedError, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
+    DeleteView,
     DetailView,
     ListView,
     TemplateView,
     UpdateView,
-    DeleteView,
 )
-from .forms import WorkerCreationForm, MaterialForm, SupplierForm, CategoryForm, WarehouseForm
-from .models import Category, Material, StockBalance, Supplier, Warehouse, Worker, MaterialSupplier
+
+from .forms import (
+    CategoryForm,
+    MaterialForm,
+    SupplierForm,
+    WarehouseForm,
+    WorkerCreationForm,
+)
+from .models import (
+    Category,
+    Material,
+    MaterialSupplier,
+    StockBalance,
+    Supplier,
+    Warehouse,
+    Worker,
+)
 
 
 def index(request):
@@ -108,6 +123,7 @@ class MaterialDetailView(LoginRequiredMixin, DetailView):
         context["suppliers"] = Supplier.objects.all()
         return context
 
+
 class MaterialCreateView(LoginRequiredMixin, CreateView):
     form_class = MaterialForm
     template_name = "lumberyard/material_form.html"
@@ -140,6 +156,7 @@ class MaterialDeleteView(LoginRequiredMixin, DeleteView):
             )
             return redirect("material-detail", pk=self.object.pk)
         return redirect(self.get_success_url())
+
 
 class WorkerCreateView(PermissionRequiredMixin, CreateView):
     form_class = WorkerCreationForm
@@ -191,12 +208,22 @@ def toggle_replenishment(request, pk, stock_pk):
     if stock.replenishment_requested_at is None:
         stock.replenishment_requested_at = timezone.now()
         stock.replenishment_requested_by = request.user
-        stock.save(update_fields=["replenishment_requested_at", "replenishment_requested_by"])
+        stock.save(
+            update_fields=[
+                "replenishment_requested_at",
+                "replenishment_requested_by",
+            ]
+        )
         messages.success(request, "Added to replenishment list.")
     else:
         stock.replenishment_requested_at = None
         stock.replenishment_requested_by = None
-        stock.save(update_fields=["replenishment_requested_at", "replenishment_requested_by"])
+        stock.save(
+            update_fields=[
+                "replenishment_requested_at",
+                "replenishment_requested_by",
+            ]
+        )
         messages.success(request, "Removed from replenishment list.")
     next_url = request.POST.get("next")
     if next_url and url_has_allowed_host_and_scheme(
@@ -387,7 +414,10 @@ def offer_save(request, material_pk):
 def offer_delete(request, material_pk, supplier_pk):
     material = get_object_or_404(Material, pk=material_pk)
     supplier = get_object_or_404(Supplier, pk=supplier_pk)
-    MaterialSupplier.objects.filter(material=material, supplier=supplier).delete()
+    MaterialSupplier.objects.filter(
+        material=material,
+        supplier=supplier,
+    ).delete()
     messages.success(request, "Offer removed.")
     return redirect("material-detail", pk=material_pk)
 
@@ -417,7 +447,6 @@ class PublicMaterialListView(ListView):
             queryset = queryset.filter(category__id=category)
 
         return queryset
-
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
