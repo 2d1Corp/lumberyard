@@ -55,6 +55,14 @@ The project uses seven main models:
 - `Supplier` — supplier information;
 - `MaterialSupplier` — a supplier offer for a material.
 
+## Database diagram
+
+The diagram reflects the current seven-model structure. The editable draw.io
+source is available in
+[`docs/lumberyard-db-structure.drawio`](docs/lumberyard-db-structure.drawio).
+
+![Lumberyard database structure](docs/lumberyard-db-structure.png)
+
 ## Local setup
 
 Python 3.12 or newer is recommended.
