@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Category, Material, Supplier, Warehouse, Worker
+from lumberyard.models import Category, Material, Supplier, Warehouse, Worker
 
 
 class WorkerCreationForm(UserCreationForm):

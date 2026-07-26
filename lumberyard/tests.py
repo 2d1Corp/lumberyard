@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
-from .models import (
+from lumberyard.models import (
     Category,
     Material,
     MaterialSupplier,
@@ -16,7 +16,7 @@ from .models import (
     Warehouse,
     Worker,
 )
-from .templatetags.lumberyard_extras import (
+from lumberyard.templatetags.lumberyard_extras import (
     MATERIAL_IMAGES,
     category_image,
     material_image,

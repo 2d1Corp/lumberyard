@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from . import views
+from lumberyard import views
 
 urlpatterns = [
     path("", include("django.contrib.auth.urls")),
@@ -48,7 +48,7 @@ urlpatterns = [
     ),
     path(
         "materials/<int:pk>/stock/<int:stock_pk>/toggle-replenishment/",
-        views.toggle_replenishment,
+        views.ToggleReplenishmentView.as_view(),
         name="material-toggle-replenishment",
     ),
     path(
@@ -58,7 +58,7 @@ urlpatterns = [
     ),
     path(
         "materials/<int:material_pk>/stock/<int:warehouse_pk>/update/",
-        views.stockbalance_update,
+        views.StockBalanceSetQuantityView.as_view(),
         name="stockbalance-update",
     ),
     path(
@@ -124,7 +124,7 @@ urlpatterns = [
     ),
     path(
         "materials/<int:material_pk>/offers/<int:supplier_pk>/delete/",
-        views.offer_delete,
+        views.OfferDeleteView.as_view(),
         name="offer-delete"
     ),
     path(

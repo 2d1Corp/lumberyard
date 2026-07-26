@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.db import models
 from django.forms import CheckboxSelectMultiple
 
-from .models import (
+from lumberyard.models import (
     Category,
     Material,
     MaterialSupplier,

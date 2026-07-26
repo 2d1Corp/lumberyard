@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views import View
 from django.views.decorators.http import require_POST
 from django.views.generic import (
     CreateView,
@@ -21,14 +22,14 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .forms import (
+from lumberyard.forms import (
     CategoryForm,
     MaterialForm,
     SupplierForm,
     WarehouseForm,
     WorkerCreationForm,
 )
-from .models import (
+from lumberyard.models import (
     Category,
     Material,
     MaterialSupplier,
@@ -197,81 +198,79 @@ class ReplenishmentListView(LoginRequiredMixin, ListView):
     ).order_by("-replenishment_requested_at")
 
 
-@login_required
-@require_POST
-def toggle_replenishment(request, pk, stock_pk):
-    stock = get_object_or_404(
-        StockBalance,
-        pk=stock_pk,
-        material_id=pk,
-    )
-    if stock.replenishment_requested_at is None:
-        stock.replenishment_requested_at = timezone.now()
-        stock.replenishment_requested_by = request.user
-        stock.save(
-            update_fields=[
-                "replenishment_requested_at",
-                "replenishment_requested_by",
-            ]
+class ToggleReplenishmentView(LoginRequiredMixin, View):
+    def post(self, request, pk, stock_pk):
+        stock = get_object_or_404(
+            StockBalance,
+            pk=stock_pk,
+            material_id=pk,
         )
-        messages.success(request, "Added to replenishment list.")
-    else:
-        stock.replenishment_requested_at = None
-        stock.replenishment_requested_by = None
-        stock.save(
-            update_fields=[
-                "replenishment_requested_at",
-                "replenishment_requested_by",
-            ]
-        )
-        messages.success(request, "Removed from replenishment list.")
-    next_url = request.POST.get("next")
-    if next_url and url_has_allowed_host_and_scheme(
-        next_url,
-        allowed_hosts={request.get_host()},
-        require_https=request.is_secure(),
-    ):
-        return redirect(next_url)
-    return redirect("material-detail", pk=pk)
-
-
-@login_required
-@require_POST
-def stockbalance_update(request, material_pk, warehouse_pk):
-    material = get_object_or_404(Material, pk=material_pk)
-    warehouse = get_object_or_404(Warehouse, pk=warehouse_pk)
-    quantity = request.POST.get("quantity", "").strip()
-
-    try:
-        quantity = Decimal(quantity)
-    except (InvalidOperation, ValueError):
-        messages.error(request, "Enter a valid quantity.")
-        return redirect("material-detail", pk=material_pk)
-
-    if quantity < 0:
-        messages.error(request, "Quantity cannot be negative.")
-        return redirect("material-detail", pk=material_pk)
-
-    stock = StockBalance.objects.filter(
-        material=material, warehouse=warehouse
-    ).first()
-
-    if quantity == 0:
-        if stock is not None:
-            stock.delete()
-            messages.success(request, "Stock removed.")
-    else:
-        if stock is None:
-            StockBalance.objects.create(
-                material=material, warehouse=warehouse, quantity=quantity
+        if stock.replenishment_requested_at is None:
+            stock.replenishment_requested_at = timezone.now()
+            stock.replenishment_requested_by = request.user
+            stock.save(
+                update_fields=[
+                    "replenishment_requested_at",
+                    "replenishment_requested_by",
+                ]
             )
-            messages.success(request, "Stock added.")
+            messages.success(request, "Added to replenishment list.")
         else:
-            stock.quantity = quantity
-            stock.save(update_fields=["quantity"])
-            messages.success(request, "Stock quantity updated.")
+            stock.replenishment_requested_at = None
+            stock.replenishment_requested_by = None
+            stock.save(
+                update_fields=[
+                    "replenishment_requested_at",
+                    "replenishment_requested_by",
+                ]
+            )
+            messages.success(request, "Removed from replenishment list.")
+        next_url = request.POST.get("next")
+        if next_url and url_has_allowed_host_and_scheme(
+            next_url,
+            allowed_hosts={request.get_host()},
+            require_https=request.is_secure(),
+        ):
+            return redirect(next_url)
+        return redirect("material-detail", pk=pk)
 
-    return redirect("material-detail", pk=material_pk)
+
+class StockBalanceSetQuantityView(LoginRequiredMixin, View):
+    def post(self, request, material_pk, warehouse_pk):
+        material = get_object_or_404(Material, pk=material_pk)
+        warehouse = get_object_or_404(Warehouse, pk=warehouse_pk)
+        quantity = request.POST.get("quantity", "").strip()
+
+        try:
+            quantity = Decimal(quantity)
+        except (InvalidOperation, ValueError):
+            messages.error(request, "Enter a valid quantity.")
+            return redirect("material-detail", pk=material_pk)
+
+        if quantity < 0:
+            messages.error(request, "Quantity cannot be negative.")
+            return redirect("material-detail", pk=material_pk)
+
+        stock = StockBalance.objects.filter(
+            material=material, warehouse=warehouse
+        ).first()
+
+        if quantity == 0:
+            if stock is not None:
+                stock.delete()
+                messages.success(request, "Stock removed.")
+        else:
+            if stock is None:
+                StockBalance.objects.create(
+                    material=material, warehouse=warehouse, quantity=quantity
+                )
+                messages.success(request, "Stock added.")
+            else:
+                stock.quantity = quantity
+                stock.save(update_fields=["quantity"])
+                messages.success(request, "Stock quantity updated.")
+
+        return redirect("material-detail", pk=material_pk)
 
 
 class SupplierListView(LoginRequiredMixin, ListView):
@@ -409,17 +408,16 @@ def offer_save(request, material_pk):
     return redirect("material-detail", pk=material_pk)
 
 
-@login_required
-@require_POST
-def offer_delete(request, material_pk, supplier_pk):
-    material = get_object_or_404(Material, pk=material_pk)
-    supplier = get_object_or_404(Supplier, pk=supplier_pk)
-    MaterialSupplier.objects.filter(
-        material=material,
-        supplier=supplier,
-    ).delete()
-    messages.success(request, "Offer removed.")
-    return redirect("material-detail", pk=material_pk)
+class OfferDeleteView(LoginRequiredMixin, View):
+    def post(self, request, material_pk, supplier_pk):
+        material = get_object_or_404(Material, pk=material_pk)
+        supplier = get_object_or_404(Supplier, pk=supplier_pk)
+        MaterialSupplier.objects.filter(
+            material=material,
+            supplier=supplier,
+        ).delete()
+        messages.success(request, "Offer removed.")
+        return redirect("material-detail", pk=material_pk)
 
 
 class PublicMaterialListView(ListView):
