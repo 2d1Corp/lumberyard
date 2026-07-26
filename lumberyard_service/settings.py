@@ -156,20 +156,20 @@ PHONENUMBER_DB_FORMAT = "E164"
 PHONENUMBER_DEFAULT_FORMAT = "INTERNATIONAL"
 
 
-# Public business contact placeholders
+# Fictional public contact details for the portfolio project
 PUBLIC_CONTACT = {
     "phones": (
         {
             "label": "Sales",
-            "display": "+420 000 000 001",
-            "href": "+420000000001",
+            "display": "+1 555 010 0142",
+            "href": "+15550100142",
         },
         {
             "label": "Pickup",
-            "display": "+420 000 000 002",
-            "href": "+420000000002",
+            "display": "+1 555 010 0143",
+            "href": "+15550100143",
         },
     ),
     "email": "hello@lumberyard.example",
-    "location": "Újezd u Brna, Czech Republic",
+    "location": "Northwood Timber Yard, 42 Cedar Lane",
 }
