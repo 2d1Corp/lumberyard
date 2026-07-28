@@ -1,0 +1,85 @@
+{% extends "lumberyard/dashboard_base.html" %}
+
+{% block title %}Suppliers | Lumberyard{% endblock %}
+
+{% block content %}
+  <header
+      class="supplier-page-header d-flex flex-column flex-sm-row
+             align-items-sm-start justify-content-between gap-3 mb-4"
+  >
+    <div>
+      <p class="dashboard-eyebrow">Supply network</p>
+      <h1 class="h2 mb-1">Suppliers</h1>
+      <p class="text-secondary mb-0">
+        Manage the internal supplier directory and its material offers.
+      </p>
+    </div>
+
+    <a class="btn btn-primary flex-shrink-0"
+       href="{% url 'supplier-create' %}">
+      <i class="bi bi-plus-lg me-1"></i>
+      Add supplier
+    </a>
+  </header>
+
+  {% if supplier_list %}
+    <div class="card supplier-list-card overflow-hidden">
+      <div class="list-group list-group-flush">
+        {% for supplier in supplier_list %}
+          <div class="list-group-item supplier-list-row p-3 bg-transparent">
+            <div
+                class="d-flex flex-column flex-sm-row align-items-sm-center
+                       justify-content-between gap-3"
+            >
+              <div class="d-flex align-items-center gap-3 min-w-0">
+                <span class="supplier-list-icon flex-shrink-0"
+                      aria-hidden="true">
+                  <i class="bi bi-truck"></i>
+                </span>
+
+                <div class="min-w-0">
+                  <h2 class="h6 mb-1 text-truncate">
+                    {{ supplier.name }}
+                  </h2>
+                  <p class="small text-secondary mb-0">
+                    {{ supplier.offer_count }}
+                    material offer{{ supplier.offer_count|pluralize }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="supplier-list-actions d-flex flex-wrap gap-2 flex-shrink-0">
+                <a class="btn btn-sm btn-outline-secondary"
+                   href="{% url 'supplier-update' supplier.pk %}">
+                  <i class="bi bi-pencil me-1"></i>
+                  Edit
+                </a>
+                <a class="btn btn-sm btn-outline-danger"
+                   href="{% url 'supplier-delete' supplier.pk %}">
+                  <i class="bi bi-trash me-1"></i>
+                  Delete
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="card supplier-empty-state">
+      <div class="card-body py-5 text-center">
+        <div class="supplier-list-icon mx-auto mb-3" aria-hidden="true">
+          <i class="bi bi-truck"></i>
+        </div>
+        <h2 class="h5 mb-2">No suppliers yet</h2>
+        <p class="text-secondary mb-3">
+          Add a supplier before recording material purchase offers.
+        </p>
+        <a class="btn btn-primary" href="{% url 'supplier-create' %}">
+          <i class="bi bi-plus-lg me-1"></i>
+          Add the first supplier
+        </a>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "lumberyard/dashboard_base.html" %}
+{% load static lumberyard_extras %}
+
+{% block title %}Materials | Lumberyard{% endblock %}
+
+{% block content %}
+  <header
+      class="material-page-header d-flex flex-column flex-sm-row
+             align-items-sm-start justify-content-between gap-3 mb-4"
+  >
+    <div>
+      <p class="dashboard-eyebrow">Inventory catalog</p>
+      <h1 class="h2 mb-1">Materials</h1>
+      <p class="text-secondary mb-0">
+        Find catalog items and open their stock and supplier workspace.
+      </p>
+    </div>
+
+    <a class="btn btn-primary flex-shrink-0"
+       href="{% url 'material-create' %}">
+      <i class="bi bi-plus-lg me-1"></i>
+      Add material
+    </a>
+  </header>
+
+  <form
+      action="{% url 'material-list' %}"
+      method="get"
+      class="material-search mb-4"
+  >
+    <div class="input-group">
+      <span class="input-group-text bg-transparent">
+        <i class="bi bi-search"></i>
+      </span>
+      <input
+          type="search"
+          name="query"
+          value="{{ request.GET.query }}"
+          class="form-control"
+          placeholder="Search by material name or SKU"
+          aria-label="Search materials"
+      >
+      <button type="submit" class="btn btn-primary">
+        Search
+      </button>
+    </div>
+
+    {% if request.GET.query %}
+      <a href="{% url 'material-list' %}"
+         class="btn btn-outline-secondary">
+        Clear
+      </a>
+    {% endif %}
+  </form>
+
+  {% if material_list %}
+    <div class="card material-list-card overflow-hidden">
+      <div class="material-list-heading" aria-hidden="true">
+        <span>Material</span>
+        <span>Category</span>
+        <span>Stock</span>
+        <span>Sale price</span>
+        <span></span>
+      </div>
+
+      {% for material in material_list %}
+        <a class="material-list-row"
+           href="{% url 'material-detail' material.pk %}">
+          <div class="material-list-product">
+            <img
+                src="{% static material|material_image %}"
+                alt=""
+                class="material-list-image"
+                loading="lazy"
+            >
+            <div class="min-w-0">
+              <strong>{{ material.name }}</strong>
+              <small>{{ material.sku }}</small>
+            </div>
+          </div>
+
+          <div class="material-list-cell">
+            <small>Category</small>
+            <span>{{ material.category.name }}</span>
+          </div>
+
+          <div class="material-list-cell">
+            <small>Stock</small>
+            <span>
+              {{ material.total_stock|default:"0" }}
+              {{ material.get_unit_display }}
+            </span>
+            {% if material.requested_count %}
+              <span class="material-replenishment-badge">
+                {{ material.requested_count }}
+                request{{ material.requested_count|pluralize }}
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="material-list-cell">
+            <small>Sale price</small>
+            <span class="material-list-price">
+              €{{ material.sale_price }}
+            </span>
+          </div>
+
+          <i class="bi bi-chevron-right material-list-arrow"
+             aria-hidden="true"></i>
+        </a>
+      {% endfor %}
+    </div>
+
+    {% include "lumberyard/includes/pagination.html" %}
+  {% else %}
+    <div class="card material-empty-state">
+      <div class="card-body py-5 text-center">
+        <div class="material-empty-icon mx-auto mb-3" aria-hidden="true">
+          {% if request.GET.query %}
+            <i class="bi bi-search"></i>
+          {% else %}
+            <i class="bi bi-box-seam"></i>
+          {% endif %}
+        </div>
+
+        {% if request.GET.query %}
+          <h2 class="h5 mb-2">No matching materials</h2>
+          <p class="text-secondary mb-3">
+            Try another material name or SKU.
+          </p>
+          <a class="btn btn-outline-secondary"
+             href="{% url 'material-list' %}">
+            Clear search
+          </a>
+        {% else %}
+          <h2 class="h5 mb-2">No materials yet</h2>
+          <p class="text-secondary mb-3">
+            Add the first material to start the inventory catalog.
+          </p>
+          <a class="btn btn-primary" href="{% url 'material-create' %}">
+            <i class="bi bi-plus-lg me-1"></i>
+            Add the first material
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

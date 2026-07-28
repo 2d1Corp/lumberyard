@@ -1,0 +1,96 @@
+{% extends "lumberyard/dashboard_base.html" %}
+
+{% block title %}Workers | Lumberyard{% endblock %}
+
+{% block content %}
+  <header
+      class="worker-page-header d-flex flex-column flex-sm-row
+             align-items-sm-start justify-content-between gap-3 mb-4"
+  >
+    <div>
+      <p class="dashboard-eyebrow">Account management</p>
+      <h1 class="h2 mb-1">Workers</h1>
+      <p class="text-secondary mb-0">
+        Review internal accounts and manage access with Django permissions.
+      </p>
+    </div>
+
+    {% if perms.lumberyard.add_worker %}
+      <a class="btn btn-primary flex-shrink-0"
+         href="{% url 'worker-create' %}">
+        <i class="bi bi-person-plus me-1"></i>
+        Add worker
+      </a>
+    {% endif %}
+  </header>
+
+  {% if worker_list %}
+    <div class="card worker-list-card overflow-hidden">
+      <div class="list-group list-group-flush">
+        {% for worker in worker_list %}
+          <article class="list-group-item worker-list-row bg-transparent">
+            <span class="worker-list-avatar" aria-hidden="true">
+              <i class="bi bi-person"></i>
+            </span>
+
+            <div class="worker-list-identity">
+              <strong>
+                {% if worker.first_name or worker.last_name %}
+                  {{ worker.first_name }} {{ worker.last_name }}
+                {% else %}
+                  {{ worker.username }}
+                {% endif %}
+              </strong>
+              <small>@{{ worker.username }}</small>
+            </div>
+
+            <div class="worker-list-detail">
+              <small>Phone</small>
+              <span>{{ worker.phone_number|default:"Not provided" }}</span>
+            </div>
+
+            <div class="worker-list-status">
+              {% if worker == request.user %}
+                <span class="badge text-bg-success">Current account</span>
+              {% elif worker.is_superuser %}
+                <span class="badge text-bg-secondary">Protected</span>
+              {% else %}
+                <span class="badge worker-standard-badge">Worker</span>
+              {% endif %}
+            </div>
+
+            <div class="worker-list-action">
+              {% if perms.lumberyard.delete_worker %}
+                {% if worker != request.user and not worker.is_superuser %}
+                  <a class="btn btn-sm btn-outline-danger"
+                     href="{% url 'worker-delete' worker.pk %}">
+                    <i class="bi bi-trash me-1"></i>
+                    Delete
+                  </a>
+                {% endif %}
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="card worker-empty-state">
+      <div class="card-body py-5 text-center">
+        <div class="worker-list-avatar mx-auto mb-3" aria-hidden="true">
+          <i class="bi bi-people"></i>
+        </div>
+        <h2 class="h5 mb-2">No worker accounts</h2>
+        <p class="text-secondary mb-3">
+          Worker accounts will appear here after they are created.
+        </p>
+        {% if perms.lumberyard.add_worker %}
+          <a class="btn btn-primary" href="{% url 'worker-create' %}">
+            <i class="bi bi-person-plus me-1"></i>
+            Add the first worker
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

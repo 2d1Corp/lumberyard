@@ -1,0 +1,80 @@
+{% extends "lumberyard/public_base.html" %}
+
+{% block title %}Contacts | Lumberyard{% endblock %}
+
+{% block content %}
+  <section class="public-page-header">
+    <div class="container">
+      <p class="public-hero-eyebrow mb-2">Talk to our team</p>
+      <h1>Contacts</h1>
+      <p>
+        Contact us about materials, availability, customer pickup or
+        delivery.
+      </p>
+    </div>
+  </section>
+
+  <section class="public-section container">
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="public-contact-panel h-100">
+          <p class="public-hero-eyebrow mb-2">Direct contact</p>
+          <h2 class="mb-4">How can we help?</h2>
+
+          <div class="public-contact-list">
+            <div>
+              <span class="public-info-card-icon">
+                <i class="bi bi-telephone"></i>
+              </span>
+              <div>
+                <p class="public-contact-label">Phone</p>
+                {% for phone in public_contact.phones %}
+                  <a href="tel:{{ phone.href }}">
+                    {{ phone.label }}: {{ phone.display }}
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div>
+              <span class="public-info-card-icon">
+                <i class="bi bi-envelope"></i>
+              </span>
+              <div>
+                <p class="public-contact-label">Email</p>
+                <a href="mailto:{{ public_contact.email }}">
+                  {{ public_contact.email }}
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <span class="public-info-card-icon">
+                <i class="bi bi-geo-alt"></i>
+              </span>
+              <div>
+                <p class="public-contact-label">Location</p>
+                <p>{{ public_contact.location }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <aside class="public-contact-note h-100">
+          <i class="bi bi-rulers"></i>
+          <h2>Prepare your request</h2>
+          <p>
+            To help us answer faster, include the material name,
+            dimensions and required amount in your message.
+          </p>
+          <a class="btn btn-primary"
+             href="mailto:{{ public_contact.email }}">
+            Send an email
+          </a>
+        </aside>
+      </div>
+    </div>
+  </section>
+{% endblock %}

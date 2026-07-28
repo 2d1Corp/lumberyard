@@ -1,0 +1,112 @@
+{% extends "lumberyard/public_base.html" %}
+{% load static lumberyard_extras %}
+
+{% block title %}{{ material.name }} | Lumberyard{% endblock %}
+
+{% block content %}
+  <section class="public-section container">
+    <a
+        href="{% url 'public-material-list' %}"
+        class="public-back-link"
+    >
+      <i class="bi bi-arrow-left"></i>
+      Back to catalog
+    </a>
+
+    <div class="row g-5 align-items-start">
+      <div class="col-lg-7">
+        <div class="public-detail-image">
+          <img
+              src="{% static material|material_image %}"
+              alt="{{ material.name }}"
+          >
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <p class="public-hero-eyebrow mb-2">
+          {{ material.category.name }}
+        </p>
+
+        <h1 class="mb-3">{{ material.name }}</h1>
+
+        {% if material.description %}
+          <p class="public-detail-description">
+            {{ material.description|linebreaksbr }}
+          </p>
+        {% endif %}
+
+        <div class="public-purchase-panel">
+          <div>
+            <p class="public-card-kicker mb-1">Sale price</p>
+            <p class="public-detail-price">
+              €{{ material.sale_price }}
+              <span>/ {{ material.get_unit_display }}</span>
+            </p>
+          </div>
+
+          {% if material.total_stock %}
+            <span class="public-stock public-stock--available">
+              Available
+            </span>
+          {% else %}
+            <span class="public-stock">Contact us</span>
+          {% endif %}
+
+          <p class="small text-secondary mb-0">
+            Contact our team to confirm current availability.
+          </p>
+
+          <a class="btn btn-primary w-100"
+             href="{% url 'contacts' %}">
+            Ask about this material
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="public-specification-panel">
+      <div>
+        <p class="public-hero-eyebrow mb-2">Product information</p>
+        <h2 class="h3 mb-0">Material specifications</h2>
+      </div>
+
+      <dl class="public-specification-grid">
+        {% if material.species %}
+          <div>
+            <dt>Species</dt>
+            <dd>{{ material.species }}</dd>
+          </div>
+        {% endif %}
+
+        {% if material.grade %}
+          <div>
+            <dt>Grade</dt>
+            <dd>{{ material.grade }}</dd>
+          </div>
+        {% endif %}
+
+        {% if material.thickness_mm %}
+          <div>
+            <dt>Thickness</dt>
+            <dd>{{ material.thickness_mm }} mm</dd>
+          </div>
+        {% endif %}
+
+        {% if material.width_mm %}
+          <div>
+            <dt>Width</dt>
+            <dd>{{ material.width_mm }} mm</dd>
+          </div>
+        {% endif %}
+
+        {% if material.length_mm %}
+          <div>
+            <dt>Length</dt>
+            <dd>{{ material.length_mm }} mm</dd>
+          </div>
+        {% endif %}
+      </dl>
+    </div>
+  </section>
+{% endblock %}

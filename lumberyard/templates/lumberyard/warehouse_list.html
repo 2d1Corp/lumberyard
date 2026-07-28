@@ -1,0 +1,85 @@
+{% extends "lumberyard/dashboard_base.html" %}
+
+{% block title %}Warehouses | Lumberyard{% endblock %}
+
+{% block content %}
+  <header
+      class="warehouse-page-header d-flex flex-column flex-sm-row
+             align-items-sm-start justify-content-between gap-3 mb-4"
+  >
+    <div>
+      <p class="dashboard-eyebrow">Stock locations</p>
+      <h1 class="h2 mb-1">Warehouses</h1>
+      <p class="text-secondary mb-0">
+        Manage the physical locations used for stock balances.
+      </p>
+    </div>
+
+    <a class="btn btn-primary flex-shrink-0"
+       href="{% url 'warehouse-create' %}">
+      <i class="bi bi-plus-lg me-1"></i>
+      Add warehouse
+    </a>
+  </header>
+
+  {% if warehouse_list %}
+    <div class="card warehouse-list-card overflow-hidden">
+      <div class="list-group list-group-flush">
+        {% for warehouse in warehouse_list %}
+          <div class="list-group-item warehouse-list-row p-3 bg-transparent">
+            <div
+                class="d-flex flex-column flex-sm-row align-items-sm-center
+                       justify-content-between gap-3"
+            >
+              <div class="d-flex align-items-center gap-3 min-w-0">
+                <span class="warehouse-list-icon flex-shrink-0"
+                      aria-hidden="true">
+                  <i class="bi bi-building"></i>
+                </span>
+
+                <div class="min-w-0">
+                  <h2 class="h6 mb-1 text-truncate">
+                    {{ warehouse.name }}
+                  </h2>
+                  <p class="small text-secondary mb-0">
+                    {{ warehouse.stock_balance_count }}
+                    stock balance{{ warehouse.stock_balance_count|pluralize }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="warehouse-list-actions d-flex flex-wrap gap-2 flex-shrink-0">
+                <a class="btn btn-sm btn-outline-secondary"
+                   href="{% url 'warehouse-update' warehouse.pk %}">
+                  <i class="bi bi-pencil me-1"></i>
+                  Edit
+                </a>
+                <a class="btn btn-sm btn-outline-danger"
+                   href="{% url 'warehouse-delete' warehouse.pk %}">
+                  <i class="bi bi-trash me-1"></i>
+                  Delete
+                </a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="card warehouse-empty-state">
+      <div class="card-body py-5 text-center">
+        <div class="warehouse-list-icon mx-auto mb-3" aria-hidden="true">
+          <i class="bi bi-building"></i>
+        </div>
+        <h2 class="h5 mb-2">No warehouses yet</h2>
+        <p class="text-secondary mb-3">
+          Add a stock location before recording material quantities.
+        </p>
+        <a class="btn btn-primary" href="{% url 'warehouse-create' %}">
+          <i class="bi bi-plus-lg me-1"></i>
+          Add the first warehouse
+        </a>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

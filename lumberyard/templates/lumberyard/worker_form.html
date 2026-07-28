@@ -1,0 +1,44 @@
+{% extends "lumberyard/dashboard_base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Add worker | Lumberyard{% endblock %}
+
+{% block content %}
+  <div class="internal-form-page material-form-page">
+    <header class="internal-form-header">
+      <div>
+        <p class="dashboard-eyebrow">Account management</p>
+        <h1 class="h2 mb-1">Add worker</h1>
+        <p class="text-secondary mb-0">
+          Create an authenticated account for a lumberyard employee.
+        </p>
+      </div>
+
+      <a class="btn btn-outline-secondary flex-shrink-0"
+         href="{% url 'worker-list' %}">
+        <i class="bi bi-arrow-left me-1"></i>
+        Back to workers
+      </a>
+    </header>
+
+    <div class="card internal-form-card">
+      <div class="card-body">
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {{ form|crispy }}
+
+          <div class="internal-form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-person-plus me-1"></i>
+              Create worker
+            </button>
+            <a class="btn btn-outline-secondary"
+               href="{% url 'worker-list' %}">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
