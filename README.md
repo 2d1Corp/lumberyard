@@ -10,6 +10,12 @@ for a timber business with two parts:
 
 The project was created as part of my Python and Django studies.
 
+## Live demo
+
+Deployed on Render: https://lumberyard.onrender.com
+
+Demo login: `user` / `user12345`
+
 ## Features
 
 ### Public pages
@@ -44,10 +50,12 @@ Authenticated workers can:
 
 - Python
 - Django 6
-- SQLite
+- SQLite (local development) / PostgreSQL via Neon (production)
 - Bootstrap 5
 - django-crispy-forms
 - django-phonenumber-field
+- Render (hosting), gunicorn, whitenoise
+- python-dotenv, dj-database-url
 
 ## Data model
 

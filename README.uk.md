@@ -11,6 +11,12 @@ Lumberyard — мій перший навчальний проєкт на Django
 
 Проєкт створено під час мого навчання Python і Django.
 
+## Жива демо-версія
+
+Розгорнуто на Render: https://lumberyard.onrender.com
+
+Демо-вхід: `user` / `user12345`
+
 ## Можливості
 
 ### Публічні сторінки
@@ -45,10 +51,12 @@ Lumberyard — мій перший навчальний проєкт на Django
 
 - Python
 - Django 6
-- SQLite
+- SQLite (локальна розробка) / PostgreSQL через Neon (продакшн)
 - Bootstrap 5
 - django-crispy-forms
 - django-phonenumber-field
+- Render (хостинг), gunicorn, whitenoise
+- python-dotenv, dj-database-url
 
 ## Модель даних
 
